@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # NEST_ProjectX
 Back-end application for NEXT_ProjectX
 
@@ -37,4 +37,3 @@ $ yarn run test:e2e
 # test coverage
 $ yarn run test:cov
 ```
->>>>>>> 05dbdf5 (Init)
