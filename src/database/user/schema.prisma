@@ -10,7 +10,7 @@ datasource db {
   schemas  = ["user"]
 }
 
-model User {
+model user {
   @@schema("user")
   
   id    String @id @db.Uuid
