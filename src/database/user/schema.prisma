@@ -23,6 +23,7 @@ model user {
   email String @db.VarChar(100) @unique
   provider provider
   original_id String @db.Char(21) @unique
+  current_refresh_token String?
   created_at DateTime @default(now())
 
   profile profile?

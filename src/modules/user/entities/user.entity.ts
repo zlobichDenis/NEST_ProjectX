@@ -8,6 +8,7 @@ export class UserEntity
     public createdAt: Date;
     public email: string;
     public profile: ProfileBaseEntity;
+    public refreshToken: string;
 
     constructor(user: UserBaseEntity)
     {
@@ -16,6 +17,7 @@ export class UserEntity
         this.originalId = user.original_id;
         this.createdAt = user.created_at;
         this.email = user.email;
+        this.refreshToken = user.current_refresh_token;
     }
 
     public setProfile(profile: ProfileBaseEntity)

@@ -37,4 +37,14 @@ export class UserRepository
 
         return new UserEntity(createdUser);
     }
+
+    public async update(userId: string, data: Prisma.userUpdateInput): Promise<UserEntity>
+    {
+        const updatedUser = await this.prismaService.user.update({
+            data,
+            where: { id: userId },
+        });
+
+        return new UserEntity(updatedUser);
+    }
 }
