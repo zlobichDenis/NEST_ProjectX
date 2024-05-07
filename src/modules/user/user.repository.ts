@@ -4,7 +4,7 @@ import { PrismaService } from "src/shared/prisma-client";
 import { UserEntity } from "./entities";
 
 @Injectable()
-export class AuthRepository
+export class UserRepository
 {
     constructor(private readonly prismaService: PrismaService) {}
 
@@ -33,7 +33,6 @@ export class AuthRepository
 
     public async create(data: Prisma.userCreateInput): Promise<UserEntity>
     {
-
         const createdUser = await this.prismaService.user.create({ data });
 
         return new UserEntity(createdUser);

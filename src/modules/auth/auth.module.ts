@@ -1,18 +1,17 @@
 import { Global, Module } from "@nestjs/common";
 import { PassportModule } from "@nestjs/passport";
-import { AuthController } from "./auth.controller";
-import { AuthRepository } from "./auth.repository";
-import { AuthService } from "./auth.service";
-import { GoogleAuthService } from "./services";
-import { GoogleOauth2Strategy } from "./strategies/google-oauth2.strategy";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { JwtStrategy } from "./strategies/jwt.strategy";
+import { AuthController } from "./auth.controller";
+import { GoogleAuthService } from "./services";
+import { GoogleOauth2Strategy, JwtStrategy } from "./strategies";
+import { UserModule } from "../user";
+import { AuthService } from "./auth.service";
 
-// TODO: split auth module into 2 modules: auth and user
 @Global()
 @Module({
     imports: [
+        UserModule,
         PassportModule,
         JwtModule.registerAsync({
             imports: [ConfigModule],
@@ -26,6 +25,6 @@ import { JwtStrategy } from "./strategies/jwt.strategy";
     ],
     exports: [],
     controllers: [AuthController],
-    providers: [AuthRepository, AuthService, GoogleAuthService, GoogleOauth2Strategy, JwtStrategy],
+    providers: [GoogleAuthService, GoogleOauth2Strategy, JwtStrategy, AuthService],
 })
 export class AuthModule {}

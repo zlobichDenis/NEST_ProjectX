@@ -4,8 +4,8 @@ import { Request, Response } from "express";
 import { ApiExcludeEndpoint, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { provider as AuthProvider } from "@prisma/client";
 import { GoogleOauth2Guard } from "src/core";
-import { AuthService } from "./auth.service";
 import { LoginDto, LoginLinkResponse } from "./dto";
+import { AuthService } from "./auth.service";
 
 @ApiTags("auth")
 @Controller("auth")
