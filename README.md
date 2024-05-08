@@ -49,7 +49,7 @@ $ yarn run test:cov
     * DATABASE_PASSWORD
   3. Only then you will be allowed to make database request
   !!! Please avoid commiting your credentials in env file
-  !!! To avoid such behavior create .env.local file and store your credentials there
+  !!! To avoid such behavior create ..env.local file and store your credentials there
 
   Database migration flow
   1. Change database structure by editing the schema.prisma

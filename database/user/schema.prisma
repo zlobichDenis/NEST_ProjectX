@@ -34,7 +34,7 @@ model profile {
 
   id String @id @db.Uuid
   family_name String @db.VarChar(255)
-  given_name String @db.VarChar(255)
+  given_name String? @db.VarChar(255)
   photo String?
   photos String[]
   created_at DateTime @default(now())

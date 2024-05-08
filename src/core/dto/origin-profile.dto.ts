@@ -1,6 +1,6 @@
 import { provider as AuthProvider } from "@prisma/client";
 
-export class CreateUserDto
+export class OriginProfile
 {
     public email: string;
     public provider: AuthProvider;

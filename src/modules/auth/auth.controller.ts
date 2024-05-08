@@ -1,13 +1,13 @@
-import { Controller, Get, HttpStatus, Param, Req, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Request, Response } from "express";
-import { ApiExcludeEndpoint, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiExcludeEndpoint, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { provider as AuthProvider } from "@prisma/client";
-import { RequestWithUser } from "src/core";
+import { OriginProfile, RequestWithUser, ZodValidationPipe } from "src/core";
 import { GoogleOauth2Guard, JwtAuthGuard, JwtRefreshGuard } from "./guards";
 import { LoginLinkResponse } from "./dto";
 import { AuthService } from "./auth.service";
-import { CreateUserDto } from "../user/dto";
+import { LoginQuery, loginSchema } from "./schemas";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -18,11 +18,11 @@ export class AuthController
         private readonly configService: ConfigService,
     ) {}
 
-    @ApiParam({ name: "provider", enum: AuthProvider })
+    @ApiQuery({ name: "provider", enum: AuthProvider })
     @ApiResponse({ type: LoginLinkResponse })
-    @Get("log-in/:provider")
+    @Get("log-in")
     // TODO: add validation for parameters
-    public async logIn(@Param("provider") provider: AuthProvider): Promise<LoginLinkResponse>
+    public async logIn(@Query(new ZodValidationPipe(loginSchema)) provider: LoginQuery): Promise<LoginLinkResponse>
     {
         return this.authService.getLoginLink(provider);
     }
@@ -44,7 +44,7 @@ export class AuthController
             }
         );
 
-        return response.send(HttpStatus.OK);
+        return response.sendStatus(HttpStatus.OK);
     }
 
     @ApiExcludeEndpoint()
@@ -56,29 +56,30 @@ export class AuthController
         const {
             access_token: accessToken,
             refresh_token: refreshToken,
-        } = await this.authService.loginOAuth(request.user as CreateUserDto);
+        } = await this.authService.loginOAuth(request.user as OriginProfile);
 
         res.cookie(
             "Authentication",
             accessToken,
             {
                 httpOnly: true,
-                sameSite: true,
+                sameSite: false,
                 secure: false,
                 maxAge: this.configService.get("jwtExpires"),
             }
         );
         res.cookie(
-            "Refresh", refreshToken,
+            "Refresh",
+            refreshToken,
             {
                 httpOnly: true,
-                sameSite: true,
+                sameSite: false,
                 secure: false,
                 maxAge: this.configService.get("jwtExpires"),
             }
         );
 
-        return res.send(HttpStatus.OK);
+        return res.sendStatus(HttpStatus.OK);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -108,6 +109,6 @@ export class AuthController
             }
         );
 
-        return res.send(HttpStatus.OK);
+        return res.sendStatus(HttpStatus.OK);
     }
 }

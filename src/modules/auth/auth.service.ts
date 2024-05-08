@@ -2,10 +2,11 @@ import { Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { provider as AuthProvider } from "@prisma/client";
 import { ConfigService } from "@nestjs/config";
+import { OriginProfile } from "src/core";
 import { UserService } from "src/modules/user";
 import { LoginLinkResponse, LoginResponse } from "./dto";
 import { GoogleAuthService } from "./services";
-import { CreateUserDto } from "../user/dto";
+import { LoginQuery } from "./schemas";
 
 type AuthServiceConfig = {
     jwtAccessSecret: string;
@@ -34,7 +35,7 @@ export class AuthService
         };
     }
 
-    public async getLoginLink(provider: AuthProvider): Promise<LoginLinkResponse>
+    public async getLoginLink({ provider }: LoginQuery): Promise<LoginLinkResponse>
     {
         let authUrl = "";
 
@@ -48,7 +49,7 @@ export class AuthService
         return new LoginLinkResponse(authUrl);
     }
 
-    public async loginOAuth(dto: CreateUserDto): Promise<LoginResponse>
+    public async loginOAuth(dto: OriginProfile): Promise<LoginResponse>
     {
         try
         {

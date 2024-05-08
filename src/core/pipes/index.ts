@@ -1,1 +1,1 @@
-export * from "./uuid-format.pipe";
+export * from "./ZodValidationPipe";
