@@ -3,15 +3,15 @@ import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcrypt";
 import { exceptionMessages } from "src/core/dictionary";
 import { UserRepository } from "./user.repository";
-import { LoginDto } from "../auth/dto";
 import { UserEntity } from "./entities";
+import { CreateUserDto } from "./dto";
 
 @Injectable()
 export class UserService
 {
-    constructor(private readonly userRepository: UserRepository) {}
+    public constructor(private readonly userRepository: UserRepository) {}
 
-    public async createUserWithProfile(dto: LoginDto): Promise<UserEntity>
+    public async createUserWithProfile(dto: CreateUserDto): Promise<UserEntity>
     {
         const userId = uuidv4();
 
@@ -25,6 +25,7 @@ export class UserService
                     id: uuidv4(),
                     family_name: dto.familyName,
                     given_name: dto.givenName,
+                    photo: dto.photos[0],
                     photos: dto.photos,
                 },
             },

@@ -15,7 +15,7 @@ export class GoogleAuthService
     private googleAuthClient: Auth.OAuth2Client;
     private config: GoogleAuthServiceConfig;
 
-    constructor(private readonly configService: ConfigService)
+    public constructor(private readonly configService: ConfigService)
     {
         this.config = {
             clientId: this.configService.get("googleClientId"),
@@ -35,7 +35,7 @@ export class GoogleAuthService
         );
     }
 
-    async getAuthorizationUrl(): Promise<string>
+    public async getAuthorizationUrl(): Promise<string>
     {
         return this.googleAuthClient.generateAuthUrl({ scope: this.config.scope });
     }

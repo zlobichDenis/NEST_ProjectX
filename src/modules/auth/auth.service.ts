@@ -3,8 +3,9 @@ import { JwtService } from "@nestjs/jwt";
 import { provider as AuthProvider } from "@prisma/client";
 import { ConfigService } from "@nestjs/config";
 import { UserService } from "src/modules/user";
-import { LoginDto, LoginLinkResponse, LoginResponse } from "./dto";
+import { LoginLinkResponse, LoginResponse } from "./dto";
 import { GoogleAuthService } from "./services";
+import { CreateUserDto } from "../user/dto";
 
 type AuthServiceConfig = {
     jwtAccessSecret: string;
@@ -18,7 +19,7 @@ export class AuthService
 {
     private config: AuthServiceConfig;
 
-    constructor(
+    public constructor(
         private readonly configService: ConfigService,
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
@@ -47,7 +48,7 @@ export class AuthService
         return new LoginLinkResponse(authUrl);
     }
 
-    public async loginOAuth(dto: LoginDto): Promise<LoginResponse>
+    public async loginOAuth(dto: CreateUserDto): Promise<LoginResponse>
     {
         try
         {

@@ -6,7 +6,7 @@ import { UserEntity } from "./entities";
 @Injectable()
 export class UserRepository
 {
-    constructor(private readonly prismaService: PrismaService) {}
+    public constructor(private readonly prismaService: PrismaService) {}
 
     public async getUserById(id: string): Promise<UserEntity | void>
     {

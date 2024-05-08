@@ -5,14 +5,15 @@ import { ApiExcludeEndpoint, ApiParam, ApiResponse, ApiTags } from "@nestjs/swag
 import { provider as AuthProvider } from "@prisma/client";
 import { RequestWithUser } from "src/core";
 import { GoogleOauth2Guard, JwtAuthGuard, JwtRefreshGuard } from "./guards";
-import { LoginDto, LoginLinkResponse } from "./dto";
+import { LoginLinkResponse } from "./dto";
 import { AuthService } from "./auth.service";
+import { CreateUserDto } from "../user/dto";
 
 @ApiTags("auth")
 @Controller("auth")
 export class AuthController
 {
-    constructor(
+    public constructor(
         private readonly authService: AuthService,
         private readonly configService: ConfigService,
     ) {}
@@ -21,14 +22,14 @@ export class AuthController
     @ApiResponse({ type: LoginLinkResponse })
     @Get("log-in/:provider")
     // TODO: add validation for parameters
-    async logIn(@Param("provider") provider: AuthProvider): Promise<LoginLinkResponse>
+    public async logIn(@Param("provider") provider: AuthProvider): Promise<LoginLinkResponse>
     {
         return this.authService.getLoginLink(provider);
     }
 
     @UseGuards(JwtRefreshGuard)
     @Get("refresh")
-    async refresh(@Req() request: RequestWithUser, @Res() response: Response): Promise<Response>
+    public async refresh(@Req() request: RequestWithUser, @Res() response: Response): Promise<Response>
     {
         const accessToken = this.authService.generateJwtAccessToken(request.user.id);
 
@@ -50,12 +51,12 @@ export class AuthController
     @ApiResponse({ description: "Token has been set to cookie" })
     @UseGuards(GoogleOauth2Guard)
     @Get("google/redirect")
-    async loginRedirect(@Req() request: Request, @Res() res: Response): Promise<Response>
+    public async loginRedirect(@Req() request: Request, @Res() res: Response): Promise<Response>
     {
         const {
             access_token: accessToken,
             refresh_token: refreshToken,
-        } = await this.authService.loginOAuth(request.user as LoginDto);
+        } = await this.authService.loginOAuth(request.user as CreateUserDto);
 
         res.cookie(
             "Authentication",
@@ -82,7 +83,7 @@ export class AuthController
 
     @UseGuards(JwtAuthGuard)
     @Get("log-out")
-    async logOut(@Req() request: RequestWithUser, @Res() res: Response): Promise<Response>
+    public async logOut(@Req() request: RequestWithUser, @Res() res: Response): Promise<Response>
     {
         await this.authService.logOut(request.user.id);
 

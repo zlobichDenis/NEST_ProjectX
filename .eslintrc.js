@@ -17,8 +17,9 @@ module.exports ={
     ignorePatterns: ['.eslintrc.js'],
     rules: {
         '@typescript-eslint/interface-name-prefix': 'off',
-        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/explicit-function-return-type': "off",
         '@typescript-eslint/explicit-module-boundary-types': 'off',
+        "@typescript-eslint/explicit-member-accessibility": "error",
         '@typescript-eslint/no-explicit-any': 'off',
         '@stylistic/brace-style': ["warn", "allman", { "allowSingleLine": true }],
         '@stylistic/indent': ['error', 4],

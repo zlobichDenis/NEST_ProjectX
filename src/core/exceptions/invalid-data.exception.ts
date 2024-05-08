@@ -1,9 +1,9 @@
 import { BadRequestException } from "@nestjs/common";
-import { ExceptionMessages } from "../dictionary";
+import { exceptionMessages } from "../dictionary";
 
 export class InvalidDataException extends BadRequestException
 {
-    constructor(response = ExceptionMessages.INVALID_UUID)
+    public constructor(response = exceptionMessages.entityNotFound)
     {
         super(response);
     }

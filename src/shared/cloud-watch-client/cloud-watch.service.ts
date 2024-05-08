@@ -14,7 +14,7 @@ export class CloudWatchService
     private cloudWatch: CloudWatchLogs;
     private config: CloudWatchServiceConfig;
 
-    constructor(private readonly configService: ConfigService)
+    public constructor(private readonly configService: ConfigService)
     {
         this.cloudWatch = new CloudWatchLogs({
             credentials: new Credentials({
@@ -30,7 +30,7 @@ export class CloudWatchService
         };
     }
 
-    async log(message: EventMessage)
+    public async log(message: EventMessage)
     {
         try
         {

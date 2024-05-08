@@ -10,7 +10,7 @@ export class UserEntity
     public profile: ProfileBaseEntity;
     public refreshToken: string;
 
-    constructor(user: UserBaseEntity)
+    public constructor(user: UserBaseEntity)
     {
         this.id = user.id;
         this.provider = user.provider;

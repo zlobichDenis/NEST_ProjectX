@@ -1,9 +1,9 @@
 import { NotFoundException } from "@nestjs/common";
-import { ExceptionMessages } from "../dictionary";
+import { exceptionMessages } from "../dictionary";
 
 export class EntityNotFoundException extends NotFoundException
 {
-    constructor(message = ExceptionMessages.ENTITY_NOT_FOUND)
+    public constructor(message = exceptionMessages.entityNotFound)
     {
         super(message);
     }

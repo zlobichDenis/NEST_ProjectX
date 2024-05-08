@@ -3,7 +3,6 @@ import { Strategy, VerifyCallback } from "passport-google-oauth20";
 import { ConfigService } from "@nestjs/config";
 import { Injectable } from "@nestjs/common";
 import { provider as AuthProvider } from "@prisma/client";
-import { LoginDto } from "../dto";
 
 type GoogleProfile = {
     id: string;
@@ -17,7 +16,7 @@ type GoogleProfile = {
 @Injectable()
 export class GoogleOauth2Strategy extends PassportStrategy(Strategy, "google")
 {
-    constructor(private readonly configService: ConfigService)
+    public constructor(private readonly configService: ConfigService)
     {
         super({
             clientID: configService.get("googleClientId"),
@@ -31,7 +30,7 @@ export class GoogleOauth2Strategy extends PassportStrategy(Strategy, "google")
         });
     }
 
-    async validate(
+    private async validate(
         _accessToken: string,
         _refreshToken: string,
         profile: GoogleProfile,
@@ -40,15 +39,14 @@ export class GoogleOauth2Strategy extends PassportStrategy(Strategy, "google")
     {
         const { id, name, emails, photos } = profile;
 
-        const user = new LoginDto(
-            emails[0].value,
-            AuthProvider.GOOGLE,
-            id,
-            name.familyName,
-            name.givenName,
-            photos.map(({ value }) => value),
-        );
-
+        const user = {
+            email: emails[0].value,
+            provider: AuthProvider.GOOGLE,
+            originalId: id,
+            familyName: name.familyName,
+            name: name.givenName,
+            photos: photos.map(({ value }) => value),
+        };
 
         done(null, user);
     }

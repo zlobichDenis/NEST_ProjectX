@@ -16,7 +16,7 @@ enum LogLevel
 @Injectable()
 export class Logger extends ConsoleLogger
 {
-    constructor(private readonly cloudWatchService: CloudWatchService)
+    public constructor(private readonly cloudWatchService: CloudWatchService)
     {
         super();
     }

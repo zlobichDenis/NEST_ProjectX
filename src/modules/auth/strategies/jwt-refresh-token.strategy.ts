@@ -9,7 +9,7 @@ import { TokenPayload } from "../types";
 @Injectable()
 export class JWTRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-refresh-token")
 {
-    constructor(
+    public constructor(
         private readonly configService: ConfigService,
         private readonly userService: UserService,
     )
@@ -24,7 +24,7 @@ export class JWTRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-ref
         });
     }
 
-    async validate(request: Request, payload: TokenPayload): Promise<boolean>
+    public async validate(request: Request, payload: TokenPayload): Promise<boolean>
     {
         const refreshToken = request.cookies?.Refresh;
         const user = await this.userService.getUserById(payload.userId);
