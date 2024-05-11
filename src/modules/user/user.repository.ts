@@ -19,16 +19,11 @@ export class UserRepository
 
     public async getUserByEmail(email: string): Promise<UserEntity | void>
     {
-        const userWithProfile = await this.prismaService.user.findUnique({
-            where: { email },
-            include: { profile: true },
-        });
+        const user = await this.prismaService.user.findUnique({ where: { email } });
 
-        if (!userWithProfile) return undefined;
+        if (!user) return undefined;
 
-        const { profile, ...user } = userWithProfile;
-
-        return new UserEntity(user).setProfile(profile);
+        return new UserEntity(user);
     }
 
     public async create(data: Prisma.userCreateInput): Promise<UserEntity>

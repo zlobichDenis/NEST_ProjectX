@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcrypt";
 import { exceptionMessages } from "src/core/dictionary";
 import { UserRepository } from "./user.repository";
-import { UserResponse } from "./responses/user.response";
+import { UserResponse } from "./responses";
 import { OriginProfile } from "../../core";
 
 @Injectable()
@@ -20,15 +20,6 @@ export class UserService
             provider: dto.provider,
             email: dto.email,
             original_id: dto.originalId,
-            profile: {
-                create: {
-                    id: uuidv4(),
-                    family_name: dto.familyName,
-                    given_name: dto.givenName,
-                    photo: dto.photos[0],
-                    photos: dto.photos,
-                },
-            },
         });
 
         return new UserResponse(createdUser);

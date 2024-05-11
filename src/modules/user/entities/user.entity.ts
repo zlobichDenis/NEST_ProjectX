@@ -1,4 +1,4 @@
-import { user as UserBaseEntity, profile as ProfileBaseEntity, provider as AuthProvider } from "@prisma/client";
+import { user as UserBaseEntity, provider as AuthProvider } from "@prisma/client";
 
 export class UserEntity
 {
@@ -7,7 +7,6 @@ export class UserEntity
     public originalId: string;
     public createdAt: Date;
     public email: string;
-    public profile: ProfileBaseEntity;
     public refreshToken: string;
 
     public constructor(user: UserBaseEntity)
@@ -18,12 +17,5 @@ export class UserEntity
         this.createdAt = user.created_at;
         this.email = user.email;
         this.refreshToken = user.current_refresh_token;
-    }
-
-    public setProfile(profile: ProfileBaseEntity)
-    {
-        this.profile = profile;
-
-        return this;
     }
 }
