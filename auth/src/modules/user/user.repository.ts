@@ -29,7 +29,7 @@ export class UserRepository
     public async create(data: Prisma.userCreateInput): Promise<UserEntity>
     {
         const createdUser = await this.prismaService.user.create({ data });
-
+        console.log(createdUser);
         return new UserEntity(createdUser);
     }
 

@@ -38,7 +38,7 @@ export class AuthController
             accessToken,
             {
                 httpOnly: true,
-                sameSite: true,
+                sameSite: "none",
                 secure: false,
                 maxAge: this.configService.get("jwtExpires"),
             }
@@ -63,7 +63,7 @@ export class AuthController
             accessToken,
             {
                 httpOnly: true,
-                sameSite: false,
+                sameSite: "none",
                 secure: false,
                 maxAge: this.configService.get("jwtExpires"),
             }
@@ -73,7 +73,7 @@ export class AuthController
             refreshToken,
             {
                 httpOnly: true,
-                sameSite: false,
+                sameSite: "none",
                 secure: false,
                 maxAge: this.configService.get("jwtExpires"),
             }
@@ -93,7 +93,7 @@ export class AuthController
             "",
             {
                 httpOnly: true,
-                sameSite: true,
+                sameSite: "none",
                 secure: false,
                 maxAge: this.configService.get("jwtExpires"),
             }
@@ -103,7 +103,7 @@ export class AuthController
             "",
             {
                 httpOnly: true,
-                sameSite: true,
+                sameSite: "none",
                 secure: false,
                 maxAge: this.configService.get("jwtExpires"),
             }
