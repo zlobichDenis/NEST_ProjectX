@@ -2,6 +2,7 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
 import { ValidationPipe } from "@nestjs/common";
+import * as cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
 import { Logger } from "./shared/logger";
 
@@ -35,6 +36,7 @@ async function bootstrap()
         "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
         "preflightContinue": false,
     });
+    app.use(cookieParser());
     await app.listen(port);
 
     console.log(`Server has been starten on ${port} port`);

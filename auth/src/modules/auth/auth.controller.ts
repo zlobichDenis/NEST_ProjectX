@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Query, Req, Res, UseGuards } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Request, Response } from "express";
-import { ApiExcludeEndpoint, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiExcludeEndpoint, ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { provider as AuthProvider } from "@prisma/client";
 import { OriginProfile, RequestWithUser, ZodValidationPipe } from "src/core";
 import { GoogleOauth2Guard, JwtAuthGuard, JwtRefreshGuard } from "./guards";
@@ -36,47 +36,29 @@ export class AuthController
         response.cookie(
             "Authentication",
             accessToken,
-            {
-                httpOnly: true,
-                sameSite: "none",
-                secure: false,
-                maxAge: this.configService.get("jwtExpires"),
-            }
+            { httpOnly: false, maxAge: this.configService.get("jwtExpires") }
         );
 
         return response.sendStatus(HttpStatus.OK);
     }
 
     @ApiExcludeEndpoint()
-    @ApiResponse({ description: "Token has been set to cookie" })
+    @ApiOkResponse({ description: "Token has been set to cookie" })
     @UseGuards(GoogleOauth2Guard)
     @Get("google/redirect")
     public async loginRedirect(@Req() request: Request, @Res() res: Response): Promise<Response>
     {
-        const {
-            access_token: accessToken,
-            refresh_token: refreshToken,
-        } = await this.authService.loginOAuth(request.user as OriginProfile);
+        const tokens = await this.authService.loginOAuth(request.user as OriginProfile);
 
         res.cookie(
             "Authentication",
-            accessToken,
-            {
-                httpOnly: true,
-                sameSite: "none",
-                secure: false,
-                maxAge: this.configService.get("jwtExpires"),
-            }
+            tokens.access_token,
+            { httpOnly: false, maxAge: this.configService.get("jwtExpires") }
         );
         res.cookie(
             "Refresh",
-            refreshToken,
-            {
-                httpOnly: true,
-                sameSite: "none",
-                secure: false,
-                maxAge: this.configService.get("jwtExpires"),
-            }
+            tokens.refresh_token,
+            { httpOnly: false, maxAge: this.configService.get("jwtExpires") }
         );
 
         return res.sendStatus(HttpStatus.OK);
@@ -91,22 +73,12 @@ export class AuthController
         res.cookie(
             "Authentication",
             "",
-            {
-                httpOnly: true,
-                sameSite: "none",
-                secure: false,
-                maxAge: this.configService.get("jwtExpires"),
-            }
+            { httpOnly: false, maxAge: this.configService.get("jwtExpires") }
         );
         res.cookie(
             "Refresh",
             "",
-            {
-                httpOnly: true,
-                sameSite: "none",
-                secure: false,
-                maxAge: this.configService.get("jwtExpires"),
-            }
+            { httpOnly: false, maxAge: this.configService.get("jwtExpires") }
         );
 
         return res.sendStatus(HttpStatus.OK);
