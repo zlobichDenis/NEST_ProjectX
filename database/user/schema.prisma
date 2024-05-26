@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["user"]
+}
+
+enum provider {
+  @@schema("user")
+
+  GOOGLE
+}
+
+model user {
+  @@schema("user")
+
+  id    String @id @db.Uuid
+  email String @db.VarChar(100) @unique
+  provider provider
+  original_id String @db.Uuid @unique
+  current_refresh_token String?
+  created_at DateTime @default(now())
+}
+
+// model profile {
+//   @@schema("user")
+//
+//   id String @id @db.Uuid
+//   family_name String @db.VarChar(255)
+//   given_name String? @db.VarChar(255)
+//   photo String?
+//   photos String[]
+//   created_at DateTime @default(now())
+//   deleted_at DateTime?
+//
+//   user_id String @db.Uuid @unique
+//   user user @relation(fields: [user_id], references: [id])
+// }
