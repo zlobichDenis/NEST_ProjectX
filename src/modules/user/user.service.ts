@@ -41,6 +41,7 @@ export class UserService
     {
         const user = await this.userRepository.getUserById(id);
 
+        // TODO: remove thrworing error, move to controller level
         if (!user)
         {
             throw new NotFoundException(exceptionMessages.entityNotFound);
@@ -53,6 +54,7 @@ export class UserService
     {
         const user = await this.userRepository.getUserByEmail(email);
 
+        // TODO: remove thrworing error, move to controller level
         if (!user)
         {
             throw new NotFoundException(exceptionMessages.entityNotFound);
@@ -65,6 +67,7 @@ export class UserService
     {
         const user = await this.userRepository.getUserById(userId);
 
+        // TODO: remove thrworing error, move to controller level
         if (!user)
         {
             throw new NotFoundException(exceptionMessages.entityNotFound);

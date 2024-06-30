@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, Post, Req, Res, UseGuards, Body, UsePipes, Param } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Post, Req, Res, UseGuards, Body, UsePipes } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Response } from "express";
 import { ApiResponse, ApiTags } from "@nestjs/swagger";
@@ -6,7 +6,7 @@ import { RequestWithUser, ZodValidationPipe } from "src/core";
 import { JwtAuthGuard, JwtRefreshGuard } from "./guards";
 import { RegisterDto, TokensResponse } from "./dto";
 import { AuthService } from "./auth.service";
-import {registerSchema } from "./schemas";
+import { registerSchema } from "./schemas";
 
 @ApiTags("auth")
 @Controller("auth")
