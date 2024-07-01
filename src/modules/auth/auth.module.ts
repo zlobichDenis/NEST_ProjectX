@@ -22,7 +22,7 @@ import { AuthService } from "./auth.service";
                 }),
         }),
     ],
-    exports: [],
+    exports: [JwtStrategy, JWTRefreshTokenStrategy],
     controllers: [AuthController],
     providers: [JwtStrategy, AuthService, JWTRefreshTokenStrategy],
 })

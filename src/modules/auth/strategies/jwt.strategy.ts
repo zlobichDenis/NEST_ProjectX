@@ -30,7 +30,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, "jwt")
 
     public async validate(payload: TokenPayload)
     {
-        console.log(payload);
         return await this.userService.getUserById(payload.userId);
     }
 }

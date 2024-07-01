@@ -24,19 +24,22 @@ model user {
   original_id String @db.Uuid @unique
   current_refresh_token String?
   created_at DateTime @default(now())
+
+  profile profile?
 }
 
-// model profile {
-//   @@schema("user")
-//
-//   id String @id @db.Uuid
-//   family_name String @db.VarChar(255)
-//   given_name String? @db.VarChar(255)
-//   photo String?
-//   photos String[]
-//   created_at DateTime @default(now())
-//   deleted_at DateTime?
-//
-//   user_id String @db.Uuid @unique
-//   user user @relation(fields: [user_id], references: [id])
-// }
+model profile {
+  @@schema("user")
+
+  id String @id @db.Uuid
+  family_name String @db.VarChar(255)
+  given_name String? @db.VarChar(255)
+  description String? @db.VarChar(1000)
+  photo String?
+  photos String[]
+  created_at DateTime @default(now())
+  deleted_at DateTime?
+
+  user user? @relation(fields: [user_id], references: [id])
+  user_id String? @db.Uuid @unique
+}

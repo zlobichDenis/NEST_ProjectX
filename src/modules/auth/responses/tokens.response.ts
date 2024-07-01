@@ -1,17 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { OriginProfile } from "../../../core";
-
-//TODO: clean and remove unused code
-export class LoginDto
-{
-    @ApiProperty()
-    public email: string;
-
-    public constructor(email: string)
-    {
-        this.email = email;
-    }
-}
 
 export class TokensResponse
 {
@@ -27,6 +14,3 @@ export class TokensResponse
         this.refresh_token = refreshToken;
     }
 }
-
-export class RegisterDto extends OriginProfile {}
-

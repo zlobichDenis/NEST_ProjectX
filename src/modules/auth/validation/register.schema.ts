@@ -5,9 +5,6 @@ export const registerSchema = z.object({
     provider: z.nativeEnum(AuthProvider),
     email: z.string().email("Invalid format"),
     originalId: z.string(),
-    familyName: z.string().optional(),
-    givenName: z.string().optional(),
-    photos: z.array(z.string()).optional(),
 });
 export type RegisterBody = z.infer<typeof registerSchema>;
 

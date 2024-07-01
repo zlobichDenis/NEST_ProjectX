@@ -2,7 +2,8 @@ import { BadRequestException, Injectable, NotFoundException } from "@nestjs/comm
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { UserService } from "src/modules/user";
-import { TokensResponse, RegisterDto } from "./dto";
+import { TokensResponse } from "./responses/tokens.response";
+import { RegisterDto } from "./requests/register.request";
 
 type AuthServiceConfig = {
     jwtAccessSecret: string;
@@ -32,28 +33,14 @@ export class AuthService
 
     public async login(dto: RegisterDto): Promise<TokensResponse>
     {
-        try
+        const existingUser = await this.userService.getUserByEmail(dto.email);
+
+        if (!existingUser)
         {
-            const existingUser = await this.userService.getUserByEmail(dto.email);
-
-            return this.generateJwtTokens(existingUser.id);
+            return this.createUser(dto);
         }
-        catch (err)
-        {
-            if (err instanceof NotFoundException)
-            {
-                const createdUser = await this.userService.createIfNotExists(dto);
 
-                if (!createdUser)
-                {
-                    throw new BadRequestException("User already exists");
-                }
-
-                return this.generateJwtTokens(createdUser.id);
-            }
-
-            throw err;
-        }
+        return this.generateJwtTokens(existingUser.id);
     }
 
     public async logOut(userId: string): Promise<void>
@@ -85,5 +72,17 @@ export class AuthService
             { userId },
             { secret: this.config.jwtRefreshSecret, expiresIn: this.config.jwtRefreshExpires }
         );
+    }
+
+    private async createUser(dto: RegisterDto): Promise<TokensResponse>
+    {
+        const createdUser = await this.userService.createIfNotExists(dto);
+
+        if (!createdUser)
+        {
+            throw new BadRequestException("User already exists");
+        }
+
+        return this.generateJwtTokens(createdUser.id);
     }
 }

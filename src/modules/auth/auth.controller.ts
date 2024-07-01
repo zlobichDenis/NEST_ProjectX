@@ -1,12 +1,13 @@
-import { Controller, Get, HttpStatus, Post, Req, Res, UseGuards, Body, UsePipes, Param } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Post, Req, Res, UseGuards, Body, UsePipes } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Response } from "express";
 import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RequestWithUser, ZodValidationPipe } from "src/core";
 import { JwtAuthGuard, JwtRefreshGuard } from "./guards";
-import { RegisterDto, TokensResponse } from "./dto";
 import { AuthService } from "./auth.service";
-import {registerSchema } from "./schemas";
+import { RegisterBody, registerSchema } from "./validation";
+import { TokensResponse } from "./responses/tokens.response";
+import { RegisterDto } from "./requests/register.request";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -24,9 +25,9 @@ export class AuthController
     @ApiResponse({ type: TokensResponse })
     @UsePipes(new ZodValidationPipe(registerSchema))
     @Post("login")
-    public async register(@Body() body: RegisterDto): Promise<TokensResponse>
+    public async register(@Body() body: RegisterBody): Promise<TokensResponse>
     {
-        return this.authService.login(body);
+        return this.authService.login(new RegisterDto(body));
     }
 
     @ApiBearerAuth()

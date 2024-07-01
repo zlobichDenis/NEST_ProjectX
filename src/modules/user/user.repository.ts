@@ -21,16 +21,14 @@ export class UserRepository
     {
         const user = await this.prismaService.user.findUnique({ where: { email } });
 
-        if (!user) return undefined;
-
-        return new UserEntity(user);
+        return user ? new UserEntity(user) : null;
     }
 
     public async create(data: Prisma.userCreateInput): Promise<UserEntity>
     {
-        const createdUser = await this.prismaService.user.create({ data });
-        console.log(createdUser);
-        return new UserEntity(createdUser);
+        const user = await this.prismaService.user.create({ data });
+
+        return new UserEntity(user);
     }
 
     public async update(userId: string, data: Prisma.userUpdateInput): Promise<UserEntity>

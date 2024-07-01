@@ -1,5 +1,5 @@
 import { PassportStrategy } from "@nestjs/passport";
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { ExtractJwt, Strategy } from "passport-jwt";
 import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
@@ -29,6 +29,11 @@ export class JWTRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-ref
     {
         const refreshToken = request.get("Authorization").replace("Bearer", "");
         const user = await this.userService.getUserById(payload.userId);
+
+        if (!user)
+        {
+            throw new NotFoundException("User was not found");
+        }
 
         request.user = {
             id: payload.userId,

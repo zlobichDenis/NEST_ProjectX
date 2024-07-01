@@ -1,17 +1,15 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcrypt";
-import { exceptionMessages } from "src/core/dictionary";
 import { UserRepository } from "./user.repository";
 import { UserResponse } from "./responses";
-import { OriginProfile } from "../../core";
 
 @Injectable()
 export class UserService
 {
     public constructor(private readonly userRepository: UserRepository) {}
 
-    public async createIfNotExists(dto: OriginProfile): Promise<UserResponse | void>
+    public async createIfNotExists(dto): Promise<UserResponse | void>
     {
         const user = await this.userRepository.getUserByEmail(dto.email);
 
@@ -23,7 +21,7 @@ export class UserService
         return this.createUser(dto);
     }
 
-    private async createUser(dto: OriginProfile): Promise<UserResponse>
+    private async createUser(dto): Promise<UserResponse>
     {
         const userId = uuidv4();
 
@@ -37,38 +35,25 @@ export class UserService
         return new UserResponse(createdUser);
     }
 
-    public async getUserById(id: string): Promise<UserResponse>
+    public async getUserById(id: string): Promise<UserResponse | void>
     {
         const user = await this.userRepository.getUserById(id);
 
-        if (!user)
-        {
-            throw new NotFoundException(exceptionMessages.entityNotFound);
-        }
-
-        return new UserResponse(user);
+        return user ? new UserResponse(user) : null;
     }
 
-    public async getUserByEmail(email: string): Promise<UserResponse>
+    public async getUserByEmail(email: string): Promise<UserResponse | void>
     {
         const user = await this.userRepository.getUserByEmail(email);
 
-        if (!user)
-        {
-            throw new NotFoundException(exceptionMessages.entityNotFound);
-        }
-
-        return new UserResponse(user);
+        return user ? new UserResponse(user) : null;
     }
 
     public async getUserIfRefreshTokenMatches(refreshToken: string, userId: string): Promise<UserResponse | void>
     {
         const user = await this.userRepository.getUserById(userId);
 
-        if (!user)
-        {
-            throw new NotFoundException(exceptionMessages.entityNotFound);
-        }
+        if (!user) return null;
 
         const isRefreshTokenMatching = await bcrypt.compare(
             refreshToken,
@@ -89,11 +74,6 @@ export class UserService
     public async removeRefreshToken(userId: string): Promise<UserResponse>
     {
         const user = await this.userRepository.update(userId, { current_refresh_token: null });
-
-        if (!user)
-        {
-            throw new NotFoundException(exceptionMessages.entityNotFound);
-        }
 
         return new UserResponse(user);
     }
