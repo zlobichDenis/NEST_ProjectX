@@ -1,9 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { UserService } from "src/modules/user";
 import { TokensResponse } from "./responses/tokens.response";
 import { RegisterDto } from "./requests/register.request";
+import { GoogleAuthService } from "./services";
 
 type AuthServiceConfig = {
     jwtAccessSecret: string;
@@ -21,6 +22,7 @@ export class AuthService
         private readonly configService: ConfigService,
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
+        private readonly googleAuthService: GoogleAuthService,
     )
     {
         this.config = {
@@ -33,7 +35,9 @@ export class AuthService
 
     public async login(dto: RegisterDto): Promise<TokensResponse>
     {
-        const existingUser = await this.userService.getUserByEmail(dto.email);
+        const originalUser = await this.googleAuthService.validateToken(dto.tokenId);
+
+        const existingUser = await this.userService.getUserByEmail(originalUser.getPayload().email);
 
         if (!existingUser)
         {

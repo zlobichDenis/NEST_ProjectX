@@ -2,25 +2,28 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../../shared/prisma-client";
 import { ProfileEntity } from "./entities/profile.entity";
 import { CreateProfileDto } from "./requests/create-profile.dto";
-import { UserEntity } from "../user/entities";
+import { GetProfileOptions } from "./requests/get-profile-options.dto";
 
 @Injectable()
 export class ProfileRepository
 {
     public constructor(private readonly prismaService: PrismaService) {}
 
-    public async getProfileById(profileId: string): Promise<ProfileEntity | null>
+    public async getProfileById(profileId: string, options?: GetProfileOptions): Promise<ProfileEntity | null>
     {
-        const profile = await this.prismaService.profile.findUnique({ where: { id: profileId } });
+        const profile = await this.prismaService.profile.findUnique({
+            where: { id: profileId },
+            include: options?.include,
+        });
 
         return profile ? new ProfileEntity(profile) : null;
     }
 
-    public async getProfileByUserId(userId: string): Promise<ProfileEntity | null>
+    public async getProfileByUserId(userId: string, options?: GetProfileOptions): Promise<ProfileEntity | null>
     {
         const profile = await this.prismaService.profile.findUnique({
             where: { user_id: userId },
-            include: { user: true },
+            include: options?.include,
         });
 
         return profile ? new ProfileEntity(profile).setUser(profile.user) : null;

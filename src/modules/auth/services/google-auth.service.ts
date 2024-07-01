@@ -35,6 +35,12 @@ export class GoogleAuthService
         );
     }
 
+    // TODO: add error handling
+    public async validateToken(tokenId: string): Promise<Auth.LoginTicket>
+    {
+        return this.googleAuthClient.verifyIdToken({ idToken: tokenId });
+    }
+
     public async getAuthorizationUrl(): Promise<string>
     {
         return this.googleAuthClient.generateAuthUrl({ scope: this.config.scope });

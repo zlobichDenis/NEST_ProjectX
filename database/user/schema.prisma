@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["multiSchema"]
 }
 
@@ -10,36 +10,35 @@ datasource db {
 }
 
 enum provider {
-  @@schema("user")
-
   GOOGLE
+
+  @@schema("user")
 }
 
 model user {
-  @@schema("user")
-
-  id    String @id @db.Uuid
-  email String @db.VarChar(100) @unique
-  provider provider
-  original_id String @db.Uuid @unique
+  id                    String   @id @db.Uuid
+  email                 String   @unique @db.VarChar(100)
+  provider              provider
   current_refresh_token String?
-  created_at DateTime @default(now())
+  created_at            DateTime @default(now())
 
   profile profile?
+
+  @@schema("user")
 }
 
 model profile {
+  id          String    @id @db.Uuid
+  family_name String    @db.VarChar(255)
+  given_name  String?   @db.VarChar(255)
+  description String?   @db.VarChar(1000)
+  photo       String?
+  photos      String[]
+  created_at  DateTime  @default(now())
+  deleted_at  DateTime?
+
+  user    user?   @relation(fields: [user_id], references: [id])
+  user_id String? @unique @db.Uuid
+
   @@schema("user")
-
-  id String @id @db.Uuid
-  family_name String @db.VarChar(255)
-  given_name String? @db.VarChar(255)
-  description String? @db.VarChar(1000)
-  photo String?
-  photos String[]
-  created_at DateTime @default(now())
-  deleted_at DateTime?
-
-  user user? @relation(fields: [user_id], references: [id])
-  user_id String? @db.Uuid @unique
 }

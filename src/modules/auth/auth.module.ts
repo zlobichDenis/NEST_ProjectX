@@ -6,6 +6,7 @@ import { AuthController } from "./auth.controller";
 import { JwtStrategy, JWTRefreshTokenStrategy } from "./strategies";
 import { UserModule } from "../user";
 import { AuthService } from "./auth.service";
+import { GoogleAuthService } from "./services";
 
 @Global()
 @Module({
@@ -24,6 +25,6 @@ import { AuthService } from "./auth.service";
     ],
     exports: [JwtStrategy, JWTRefreshTokenStrategy],
     controllers: [AuthController],
-    providers: [JwtStrategy, AuthService, JWTRefreshTokenStrategy],
+    providers: [JwtStrategy, AuthService, JWTRefreshTokenStrategy, GoogleAuthService],
 })
 export class AuthModule {}
