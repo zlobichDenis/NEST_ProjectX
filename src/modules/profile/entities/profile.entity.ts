@@ -10,7 +10,7 @@ export class ProfileEntity
     public photo?: string;
     public deletedAt?: Date;
 
-    public user: UserEntity;
+    public user?: UserEntity;
 
     public constructor({ id, family_name, given_name, created_at, deleted_at, photo }: ProfileBaseEntity)
     {
@@ -22,9 +22,9 @@ export class ProfileEntity
         this.photo = photo;
     }
 
-    public setUser(user: UserBaseEntity): ProfileEntity
+    public setUser(user?: UserBaseEntity): ProfileEntity
     {
-        this.user = new UserEntity(user);
+        this.user = user ? new UserEntity(user) : undefined;
 
         return this;
     }

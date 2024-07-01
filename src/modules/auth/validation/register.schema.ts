@@ -3,8 +3,7 @@ import { provider as AuthProvider } from "@prisma/client";
 
 export const registerSchema = z.object({
     provider: z.nativeEnum(AuthProvider),
-    email: z.string().email("Invalid format"),
-    originalId: z.string(),
+    tokenId: z.string(),
 });
 export type RegisterBody = z.infer<typeof registerSchema>;
 

@@ -3,13 +3,14 @@ import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcrypt";
 import { UserRepository } from "./user.repository";
 import { UserResponse } from "./responses";
+import { CreateUserDto } from './requests/create-user.dto';
 
 @Injectable()
 export class UserService
 {
     public constructor(private readonly userRepository: UserRepository) {}
 
-    public async createIfNotExists(dto): Promise<UserResponse | void>
+    public async createIfNotExists(dto: CreateUserDto): Promise<UserResponse | void>
     {
         const user = await this.userRepository.getUserByEmail(dto.email);
 
@@ -21,7 +22,7 @@ export class UserService
         return this.createUser(dto);
     }
 
-    private async createUser(dto): Promise<UserResponse>
+    private async createUser(dto: CreateUserDto): Promise<UserResponse>
     {
         const userId = uuidv4();
 
@@ -29,7 +30,6 @@ export class UserService
             id: userId,
             provider: dto.provider,
             email: dto.email,
-            original_id: dto.originalId,
         });
 
         return new UserResponse(createdUser);

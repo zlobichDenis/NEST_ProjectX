@@ -4,19 +4,15 @@ import { RegisterBody } from "../validation";
 
 export class RegisterDto
 {
-    @ApiProperty()
-    public email: string;
-
     @ApiProperty({ enum: AuthProvider })
     public provider: AuthProvider;
 
     @ApiProperty()
-    public originalId: string;
+    public tokenId: string;
 
-    public constructor({ originalId, provider, email }: RegisterBody)
+    public constructor({ provider, tokenId }: RegisterBody)
     {
-        this.email = email;
         this.provider = provider;
-        this.originalId = originalId;
+        this.tokenId = tokenId;
     }
 }

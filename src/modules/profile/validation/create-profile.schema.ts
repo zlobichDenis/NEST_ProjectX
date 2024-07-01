@@ -1,11 +1,10 @@
 import { z } from "zod";
 
 export const createProfileSchema = z.object({
-    userId: z.string().uuid(),
-    familyName: z.string().max(255),
-    givenName: z.string().max(255),
-    photo: z.string(),
-    description: z.string().max(1000),
+    family_name: z.string().max(255),
+    given_name: z.string().max(255),
+    photo: z.string().optional(),
+    description: z.string().max(1000).optional(),
 });
 export type CreateProfileBody = z.infer<typeof createProfileSchema>;
 

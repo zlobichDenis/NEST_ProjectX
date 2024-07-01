@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Post, Req, Res, UseGuards, Body, UsePipes } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Response } from "express";
-import { ApiBearerAuth, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RequestWithUser, ZodValidationPipe } from "src/core";
 import { JwtAuthGuard, JwtRefreshGuard } from "./guards";
 import { AuthService } from "./auth.service";
@@ -18,11 +18,8 @@ export class AuthController
         private readonly configService: ConfigService,
     ) {}
 
-    // TODO: after vacation rewrite all auth logic to
-    // 1. Change dto to get only tokenId and provider string
-    // 2. Validate and get tokenPayload in GoogleJwtGuard
-    // 3. Create own tokens and return response to the client
     @ApiResponse({ type: TokensResponse })
+    @ApiBody({ type: RegisterDto })
     @UsePipes(new ZodValidationPipe(registerSchema))
     @Post("login")
     public async register(@Body() body: RegisterBody): Promise<TokensResponse>

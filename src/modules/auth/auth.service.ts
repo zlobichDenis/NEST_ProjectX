@@ -1,9 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
+import { provider as AuthProvider } from "@prisma/client";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { UserService } from "src/modules/user";
 import { TokensResponse } from "./responses/tokens.response";
 import { RegisterDto } from "./requests/register.request";
+import { GoogleAuthService } from "./services";
+import { CreateUserDto } from "../user/requests/create-user.dto";
 
 type AuthServiceConfig = {
     jwtAccessSecret: string;
@@ -21,6 +24,7 @@ export class AuthService
         private readonly configService: ConfigService,
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
+        private readonly googleAuthService: GoogleAuthService,
     )
     {
         this.config = {
@@ -33,11 +37,13 @@ export class AuthService
 
     public async login(dto: RegisterDto): Promise<TokensResponse>
     {
-        const existingUser = await this.userService.getUserByEmail(dto.email);
+        const originalUser = await this.googleAuthService.validateToken(dto.tokenId);
+
+        const existingUser = await this.userService.getUserByEmail(originalUser.getPayload().email);
 
         if (!existingUser)
         {
-            return this.createUser(dto);
+            return this.createUser(dto.provider, originalUser.getPayload().email);
         }
 
         return this.generateJwtTokens(existingUser.id);
@@ -74,9 +80,9 @@ export class AuthService
         );
     }
 
-    private async createUser(dto: RegisterDto): Promise<TokensResponse>
+    private async createUser(provider: AuthProvider, email: string): Promise<TokensResponse>
     {
-        const createdUser = await this.userService.createIfNotExists(dto);
+        const createdUser = await this.userService.createIfNotExists(new CreateUserDto(provider, email));
 
         if (!createdUser)
         {

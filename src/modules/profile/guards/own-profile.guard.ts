@@ -16,7 +16,9 @@ export class OwnProfileGuard implements CanActivate
     {
         const request = context.switchToHttp().getRequest();
 
-        const profile = request.profile || await this.profileRepository.getProfileByUserId(request.user.id);
+        const profile = request.profile?.user
+            ? request.profile
+            : await this.profileRepository.getProfileByUserId(request.user.id, { include: { user: true } });
 
         if (profile.user.id !== request.user.id)
         {
