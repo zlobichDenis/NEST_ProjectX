@@ -8,7 +8,7 @@ COPY . .
 # Install project dependencies
 RUN yarn install --frozen-lockfile
 
-RUN yarn prisma:user:generate
+RUN yarn prisma:generate
 RUN yarn build
 
 

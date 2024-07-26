@@ -29,7 +29,7 @@ export class ProfileController
     // Add body type to swagger
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, ProfileNotExistsGuard)
-    @ApiBody({})
+    @ApiBody({ type: CreateProfileDto })
     @Post("/my")
     public async createOwnProfile(
         @Req() request: RequestWithUser,
@@ -39,10 +39,8 @@ export class ProfileController
     {
         const createProfileDto = new CreateProfileDto(
             request.user.id,
-            createProfile.family_name,
-            createProfile.given_name,
+            createProfile.name,
             createProfile.photo,
-            createProfile.description,
         );
 
         return this.profileService.createUserProfile(createProfileDto);

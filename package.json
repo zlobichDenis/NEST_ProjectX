@@ -18,10 +18,10 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:user:generate": "prisma generate --schema=./database/user/schema.prisma",
-    "prisma:user:migrate": "prisma migrate dev --create-only --schema=./database/user/schema.prisma",
-    "prisma:user:apply": "prisma migrate dev --schema=./database/user/schema.prisma",
-    "prisma:user:rollback": "prisma migrate resolve --schema=./database/user/schema.prisma --rolled-back"
+    "prisma:generate": "prisma generate --schema=./database/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --create-only --schema=./database/schema.prisma",
+    "prisma:apply": "prisma migrate dev --schema=./database/schema.prisma",
+    "prisma:rollback": "prisma migrate resolve --schema=./database/schema.prisma --rolled-back"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

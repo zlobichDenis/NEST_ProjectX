@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcrypt";
 import { UserRepository } from "./user.repository";
 import { UserResponse } from "./responses";
-import { CreateUserDto } from './requests/create-user.dto';
+import { CreateUserDto } from "./requests/create-user.dto";
 
 @Injectable()
 export class UserService

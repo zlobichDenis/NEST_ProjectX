@@ -4,21 +4,19 @@ import { UserEntity } from "../../user/entities";
 export class ProfileEntity
 {
     public id: string;
-    public familyName: string;
-    public givenName: string;
+    public displayName: string;
     public createdAt: Date;
     public photo?: string;
-    public deletedAt?: Date;
+    public updatedAt?: Date;
 
     public user?: UserEntity;
 
-    public constructor({ id, family_name, given_name, created_at, deleted_at, photo }: ProfileBaseEntity)
+    public constructor({ id, display_name, created_at, updated_at, photo }: ProfileBaseEntity)
     {
         this.id = id;
-        this.familyName = family_name;
-        this.givenName = given_name;
+        this.displayName = display_name;
         this.createdAt = created_at ? new Date(created_at) : undefined;
-        this.deletedAt = deleted_at ? new Date(deleted_at) : undefined;
+        this.updatedAt = updated_at ? new Date(updated_at) : undefined;
         this.photo = photo;
     }
 

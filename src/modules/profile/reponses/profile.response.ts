@@ -8,7 +8,7 @@ export class ProfileResponse
     public id: string;
 
     @ApiProperty()
-    public givenName: string;
+    public displayName: string;
 
     @ApiProperty()
     public familyName: string;
@@ -20,19 +20,18 @@ export class ProfileResponse
     public photo?: string;
 
     @ApiProperty({ type: Date })
-    public deletedAt?: Date;
+    public updatedAt?: Date;
 
     @ApiProperty({ type: UserResponse })
     public user?: UserResponse;
 
-    public constructor({ id, user, givenName, familyName, photo, deletedAt, createdAt }: ProfileEntity)
+    public constructor({ id, user, displayName, photo, createdAt, updatedAt }: ProfileEntity)
     {
         this.id = id;
-        this.givenName = givenName;
-        this.familyName = familyName;
+        this.displayName = displayName;
         this.photo = photo;
-        this.deletedAt = deletedAt;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
         this.user = user;
     }
 }

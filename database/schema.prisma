@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum provider {
+  GOOGLE
+  YANDEX
+}
+
+model user {
+  id                    String    @id @db.Uuid
+  email                 String    @unique @db.VarChar(100)
+  provider              provider
+  current_refresh_token String?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime?
+
+  seller  seller?
+  profile profile?
+}
+
+model profile {
+  id           String    @id @db.Uuid
+  display_name String    @db.VarChar(255)
+  photo        String?
+  created_at   DateTime  @default(now())
+  updated_at   DateTime?
+
+  user    user?   @relation(fields: [user_id], references: [id])
+  user_id String? @unique @db.Uuid
+}
+
+model seller {
+  id                   String    @id @db.Uuid
+  display_name         String    @db.VarChar(255)
+  full_name            String    @unique @db.VarChar(500)
+  description          String    @db.VarChar(2000)
+  logo                 String
+  address              String    @db.VarChar(2000)
+  contact_phone_number String    @db.VarChar(2000)
+  user                 user?     @relation(fields: [user_id], references: [id])
+  user_id              String?   @unique @db.Uuid
+  created_at           DateTime  @default(now())
+  updated_at           DateTime?
+}

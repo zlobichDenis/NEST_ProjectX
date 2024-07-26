@@ -31,20 +31,16 @@ export class ProfileRepository
 
     public async createProfile({
         id,
-        familyName,
-        givenName,
         photo,
-        description,
+        name,
         userId,
     }: CreateProfileDto): Promise<ProfileEntity | null>
     {
         const profile = await this.prismaService.profile.create({
             data: {
                 id,
-                family_name: familyName,
-                given_name: givenName,
+                display_name:  name,
                 photo,
-                description,
                 user_id: userId,
             },
         });
