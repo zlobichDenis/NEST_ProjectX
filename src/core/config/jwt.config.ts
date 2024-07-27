@@ -1,5 +1,3 @@
-import * as process from "node:process";
-
 type JwtConfig = {
     jwtSecret: string;
     jwtExpires: number;

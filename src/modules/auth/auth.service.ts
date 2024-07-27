@@ -7,6 +7,7 @@ import { TokensResponse } from "./responses/tokens.response";
 import { RegisterDto } from "./requests/register.request";
 import { GoogleAuthService } from "./services";
 import { CreateUserDto } from "../user/requests/create-user.dto";
+import { AuthLinkResponse } from "./responses/oauth-link.response";
 
 type AuthServiceConfig = {
     jwtAccessSecret: string;
@@ -49,12 +50,26 @@ export class AuthService
         return this.generateJwtTokens(existingUser.id);
     }
 
+    public async getLoginLink(provider: AuthProvider): Promise<AuthLinkResponse>
+    {
+        let authUrl = "";
+
+        switch (provider)
+        {
+            case AuthProvider.GOOGLE:
+                authUrl = await this.googleAuthService.getAuthorizationUrl();
+                break;
+        }
+
+        return new AuthLinkResponse(authUrl);
+    }
+
     public async logOut(userId: string): Promise<void>
     {
         await this.userService.removeRefreshToken(userId);
     }
 
-    private async generateJwtTokens(userId: string): Promise<TokensResponse>
+    public async generateJwtTokens(userId: string): Promise<TokensResponse>
     {
         const accessToken = this.generateJwtAccessToken(userId);
         const refreshToken = this.generateJwtRefreshToken(userId);
@@ -72,15 +87,7 @@ export class AuthService
         );
     }
 
-    private generateJwtRefreshToken(userId: string): string
-    {
-        return this.jwtService.sign(
-            { userId },
-            { secret: this.config.jwtRefreshSecret, expiresIn: this.config.jwtRefreshExpires }
-        );
-    }
-
-    private async createUser(provider: AuthProvider, email: string): Promise<TokensResponse>
+    public async createUser(provider: AuthProvider, email: string): Promise<TokensResponse>
     {
         const createdUser = await this.userService.createIfNotExists(new CreateUserDto(provider, email));
 
@@ -90,5 +97,13 @@ export class AuthService
         }
 
         return this.generateJwtTokens(createdUser.id);
+    }
+
+    private generateJwtRefreshToken(userId: string): string
+    {
+        return this.jwtService.sign(
+            { userId },
+            { secret: this.config.jwtRefreshSecret, expiresIn: this.config.jwtRefreshExpires }
+        );
     }
 }

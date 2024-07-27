@@ -1,13 +1,15 @@
-import { Controller, Get, HttpStatus, Post, Req, Res, UseGuards, Body, UsePipes } from "@nestjs/common";
+import { Controller, Get, HttpStatus, Post, Req, Res, UseGuards, Body, UsePipes, Param } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import { provider as AuthProvider } from "@prisma/client";
 import { Response } from "express";
-import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RequestWithUser, ZodValidationPipe } from "src/core";
-import { JwtAuthGuard, JwtRefreshGuard } from "./guards";
+import { GoogleOauth2Guard, JwtAuthGuard, JwtRefreshGuard } from "./guards";
 import { AuthService } from "./auth.service";
 import { RegisterBody, registerSchema } from "./validation";
 import { TokensResponse } from "./responses/tokens.response";
 import { RegisterDto } from "./requests/register.request";
+import { AuthLinkResponse } from "./responses/oauth-link.response";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -25,6 +27,25 @@ export class AuthController
     public async register(@Body() body: RegisterBody): Promise<TokensResponse>
     {
         return this.authService.login(new RegisterDto(body));
+    }
+
+    @ApiExcludeEndpoint()
+    @ApiParam({ name: "provider", enum: AuthProvider })
+    @ApiResponse({ type: AuthLinkResponse })
+    @Get("log-in/:provider")
+    // TODO: add validation for parameters
+    async loginLink(@Param("provider") provider: AuthProvider): Promise<AuthLinkResponse>
+    {
+        return this.authService.getLoginLink(provider);
+    }
+
+    @ApiExcludeEndpoint()
+    @ApiResponse({ type: TokensResponse, description: "Token has been set to cookie" })
+    @UseGuards(GoogleOauth2Guard)
+    @Get("google/redirect")
+    async loginRedirect(@Req() request: RequestWithUser, @Res() res: Response): Promise<TokensResponse>
+    {
+        return this.authService.createUser(AuthProvider.GOOGLE, request.user.email);
     }
 
     @ApiBearerAuth()

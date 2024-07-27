@@ -7,6 +7,9 @@ import { JwtStrategy, JWTRefreshTokenStrategy } from "./strategies";
 import { UserModule } from "../user";
 import { AuthService } from "./auth.service";
 import { GoogleAuthService } from "./services";
+import { LocalStrategy } from "./strategies/local.strategy";
+import { AuthInternalService } from "./internal/auth-internal.service";
+import { AuthInternalController } from "./internal/auth-internal.controller";
 
 @Global()
 @Module({
@@ -24,7 +27,14 @@ import { GoogleAuthService } from "./services";
         }),
     ],
     exports: [JwtStrategy, JWTRefreshTokenStrategy],
-    controllers: [AuthController],
-    providers: [JwtStrategy, AuthService, JWTRefreshTokenStrategy, GoogleAuthService],
+    controllers: [AuthController, AuthInternalController],
+    providers: [
+        JwtStrategy,
+        AuthService,
+        JWTRefreshTokenStrategy,
+        GoogleAuthService,
+        LocalStrategy,
+        AuthInternalService,
+    ],
 })
 export class AuthModule {}

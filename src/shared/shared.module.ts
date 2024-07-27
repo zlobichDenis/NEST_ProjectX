@@ -1,7 +1,14 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import * as Joi from "joi";
-import { getAppConfig, getAwsSdkConfig, getDatabaseConfig, getGoogleApiConfig, getJwtConfig } from "src/core/config";
+import {
+    getAppConfig,
+    getAwsSdkConfig,
+    getBasicAuthConfig,
+    getDatabaseConfig,
+    getGoogleApiConfig,
+    getJwtConfig,
+} from "src/core/config";
 import { PrismaService } from "./prisma-client";
 import { CloudWatchService } from "./cloud-watch-client";
 import { Logger } from "./logger";
@@ -15,7 +22,14 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
             envFilePath: [".env"],
             // separate function for each config is
             // needed cause probably in future I will inject specific config module in features
-            load: [getAppConfig, getDatabaseConfig, getGoogleApiConfig, getAwsSdkConfig, getJwtConfig],
+            load: [
+                getAppConfig,
+                getDatabaseConfig,
+                getGoogleApiConfig,
+                getAwsSdkConfig,
+                getJwtConfig,
+                getBasicAuthConfig,
+            ],
             validationSchema: Joi.object({
                 NODE_ENV: Joi.string().valid("develop", "local").default("develop"),
                 DATABASE_URL: Joi.string(),
@@ -31,6 +45,8 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
                 // AWS_CLOUDWATCH_STREAM_NAME: Joi.string(),
                 JWT_SECRET: Joi.string(),
                 JWT_EXPIRATION_TIME: Joi.number(),
+                BASIC_USERNAME: Joi.string(),
+                BASIC_PASSWORD: Joi.string(),
             }),
         }),
     ],
