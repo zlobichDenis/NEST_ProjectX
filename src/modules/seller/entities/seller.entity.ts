@@ -1,5 +1,6 @@
 import { seller as SellerBaseEntity, user as UserBaseEntity } from "@prisma/client";
 import { UserEntity } from "../../user/entities";
+import { AddressEntity } from "../../address/entities/address.entity";
 
 export class SellerEntity
 {
@@ -11,8 +12,10 @@ export class SellerEntity
     public logo: string;
     public contactPhoneNumber: string;
     public createdAt: Date;
+
     public updatedAt?: Date;
     public user?: UserEntity;
+    public address?: AddressEntity;
 
     public constructor({
         user_id,
@@ -37,9 +40,16 @@ export class SellerEntity
         this.contactPhoneNumber = contact_phone_number;
     }
 
-    public setUser(user: UserBaseEntity)
+    public setUser(user: UserBaseEntity): SellerEntity
     {
         this.user = new UserEntity(user);
+
+        return this;
+    }
+
+    public setAddress(address: AddressEntity): SellerEntity
+    {
+        this.address = address;
 
         return this;
     }

@@ -20,7 +20,6 @@ export class SellerController
 
     @ApiCreatedResponse({ type: CreateSellerResponse })
     @ApiBody({ type: CreateSellerDto })
-    @UseGuards(SellerExistsGuard)
     @Post("/my")
     public async createOwnSeller(
         @Req() request: RequestWithUser,

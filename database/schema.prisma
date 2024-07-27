@@ -33,6 +33,8 @@ model profile {
 
   user    user?   @relation(fields: [user_id], references: [id])
   user_id String? @unique @db.Uuid
+
+  profile_address profile_address[]
 }
 
 model seller {
@@ -41,11 +43,50 @@ model seller {
   full_name            String    @unique @db.VarChar(500)
   description          String    @db.VarChar(2000)
   logo                 String
-  // address              String    @db.VarChar(2000)
   contact_phone_number String    @db.VarChar(2000)
   created_at           DateTime  @default(now())
   updated_at           DateTime?
 
   user    user?   @relation(fields: [user_id], references: [id])
   user_id String? @unique @db.Uuid
+
+  seller_address seller_address[]
+}
+
+model seller_address {
+  seller    seller @relation(fields: [seller_id], references: [id])
+  seller_id String @db.Uuid
+
+  address    address @relation(fields: [address_id], references: [id])
+  address_id String  @db.Uuid
+
+  created_at DateTime @default(now())
+
+  @@id([seller_id, address_id])
+}
+
+model profile_address {
+  profile    profile @relation(fields: [profile_id], references: [id])
+  profile_id String  @db.Uuid
+
+  address    address @relation(fields: [address_id], references: [id])
+  address_id String  @db.Uuid
+
+  created_at DateTime @default(now())
+
+  @@id([profile_id, address_id])
+}
+
+model address {
+  id           String   @unique @db.Uuid
+  country      String   @db.VarChar(255)
+  city         String   @db.VarChar(255)
+  post_index   String   @db.VarChar(255)
+  street       String   @db.VarChar(255)
+  house_number Int
+  apartment    Int?
+  created_at   DateTime @default(now())
+
+  seller_addresses seller_address[]
+  profile_address  profile_address[]
 }
