@@ -41,10 +41,11 @@ model seller {
   full_name            String    @unique @db.VarChar(500)
   description          String    @db.VarChar(2000)
   logo                 String
-  address              String    @db.VarChar(2000)
+  // address              String    @db.VarChar(2000)
   contact_phone_number String    @db.VarChar(2000)
-  user                 user?     @relation(fields: [user_id], references: [id])
-  user_id              String?   @unique @db.Uuid
   created_at           DateTime  @default(now())
   updated_at           DateTime?
+
+  user    user?   @relation(fields: [user_id], references: [id])
+  user_id String? @unique @db.Uuid
 }

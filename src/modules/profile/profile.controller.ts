@@ -7,7 +7,7 @@ import { ProfileResponse } from "./reponses/profile.response";
 import { CreateProfileDto } from "./requests/create-profile.dto";
 import { ProfileExistsGuard } from "./guards/profile-exists.guard";
 import { OwnProfileGuard } from "./guards/own-profile.guard";
-import { ProfileNotExistsGuard } from "./guards/profile-not-exists.buard";
+import { ProfileNotExistsGuard } from "./guards/profile-not-exist.guard";
 import { CreateProfileBody, createProfileSchema } from "./validation/create-profile.schema";
 
 @ApiTags("profile")
@@ -26,7 +26,6 @@ export class ProfileController
         return this.profileService.getProfileByUserId(request.user.id);
     }
 
-    // Add body type to swagger
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard, ProfileNotExistsGuard)
     @ApiBody({ type: CreateProfileDto })

@@ -14,7 +14,7 @@ CREATE TABLE "user" (
 );
 
 INSERT INTO "user" (id, email, provider, current_refresh_token, updated_at)
-VALUES ('f598b2d3-e9c8-4ca8-8a5c-fb233aae61bf', 'sgsdgk9232@gmail.com', 'GOOGLE', null, null);
+    VALUES ('f598b2d3-e9c8-4ca8-8a5c-fb233aae61bf', 'sgsdgk9232@gmail.com', 'GOOGLE', null, null);
 
 -- CreateTable
 CREATE TABLE "profile" (
@@ -28,6 +28,7 @@ CREATE TABLE "profile" (
     CONSTRAINT "profile_pkey" PRIMARY KEY ("id")
 );
 
+
 -- CreateTable
 CREATE TABLE "seller" (
     "id" UUID NOT NULL,
@@ -35,11 +36,10 @@ CREATE TABLE "seller" (
     "full_name" VARCHAR(500) NOT NULL,
     "description" VARCHAR(2000) NOT NULL,
     "logo" TEXT NOT NULL,
-    "address" VARCHAR(2000) NOT NULL,
     "contact_phone_number" VARCHAR(2000) NOT NULL,
-    "user_id" UUID,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3),
+    "user_id" UUID,
 
     CONSTRAINT "seller_pkey" PRIMARY KEY ("id")
 );
