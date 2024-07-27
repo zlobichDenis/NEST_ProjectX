@@ -1,5 +1,6 @@
 import { Global, Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import * as Joi from "joi";
 import {
     getAppConfig,
@@ -8,11 +9,11 @@ import {
     getDatabaseConfig,
     getGoogleApiConfig,
     getJwtConfig,
+    getYandexConfig,
 } from "src/core/config";
 import { PrismaService } from "./prisma-client";
 import { CloudWatchService } from "./cloud-watch-client";
 import { Logger } from "./logger";
-import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Global()
 @Module({
@@ -29,6 +30,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
                 getAwsSdkConfig,
                 getJwtConfig,
                 getBasicAuthConfig,
+                getYandexConfig,
             ],
             validationSchema: Joi.object({
                 NODE_ENV: Joi.string().valid("develop", "local").default("develop"),
@@ -47,6 +49,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
                 JWT_EXPIRATION_TIME: Joi.number(),
                 BASIC_USERNAME: Joi.string(),
                 BASIC_PASSWORD: Joi.string(),
+                YANDEX_LOGIN_INFO_URL: Joi.string(),
             }),
         }),
     ],

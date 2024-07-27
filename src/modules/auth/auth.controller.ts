@@ -26,7 +26,7 @@ export class AuthController
     @Post("login")
     public async register(@Body() body: RegisterBody): Promise<TokensResponse>
     {
-        return this.authService.login(new RegisterDto(body));
+        return this.authService.loginViaProvider(new RegisterDto(body));
     }
 
     @ApiExcludeEndpoint()

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { provider as AuthProvider } from "@prisma/client";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -8,6 +8,7 @@ import { RegisterDto } from "./requests/register.request";
 import { GoogleAuthService } from "./services";
 import { CreateUserDto } from "../user/requests/create-user.dto";
 import { AuthLinkResponse } from "./responses/oauth-link.response";
+import { YandexAuthService } from "./services/yandex-auth.service";
 
 type AuthServiceConfig = {
     jwtAccessSecret: string;
@@ -26,6 +27,7 @@ export class AuthService
         private readonly userService: UserService,
         private readonly jwtService: JwtService,
         private readonly googleAuthService: GoogleAuthService,
+        private readonly yandexAuthService: YandexAuthService,
     )
     {
         this.config = {
@@ -36,18 +38,16 @@ export class AuthService
         };
     }
 
-    public async login(dto: RegisterDto): Promise<TokensResponse>
+    public async loginViaProvider(dto: RegisterDto): Promise<TokensResponse>
     {
-        const originalUser = await this.googleAuthService.validateToken(dto.tokenId);
-
-        const existingUser = await this.userService.getUserByEmail(originalUser.getPayload().email);
-
-        if (!existingUser)
+        switch (dto.provider)
         {
-            return this.createUser(dto.provider, originalUser.getPayload().email);
-        }
+            case AuthProvider.GOOGLE:
+                return this.loginViaGoogle(dto);
 
-        return this.generateJwtTokens(existingUser.id);
+            case AuthProvider.YANDEX:
+                return this.loginViaYandex(dto);
+        }
     }
 
     public async getLoginLink(provider: AuthProvider): Promise<AuthLinkResponse>
@@ -71,15 +71,15 @@ export class AuthService
 
     public async generateJwtTokens(userId: string): Promise<TokensResponse>
     {
-        const accessToken = this.generateJwtAccessToken(userId);
-        const refreshToken = this.generateJwtRefreshToken(userId);
+        const accessToken = await this.generateJwtAccessToken(userId);
+        const refreshToken = await this.generateJwtRefreshToken(userId);
 
         await this.userService.setCurrentRefreshToken(refreshToken, userId);
 
         return new TokensResponse(accessToken, refreshToken);
     }
 
-    public generateJwtAccessToken(userId: string): string
+    public async generateJwtAccessToken(userId: string): Promise<string>
     {
         return this.jwtService.sign(
             { userId },
@@ -99,7 +99,38 @@ export class AuthService
         return this.generateJwtTokens(createdUser.id);
     }
 
-    private generateJwtRefreshToken(userId: string): string
+    private async loginViaGoogle(dto: RegisterDto): Promise<TokensResponse>
+    {
+        const originalUser = await this.googleAuthService.validateToken(dto.tokenId);
+
+        return this.loginViaEmail(dto.provider, originalUser.getPayload().email);
+    }
+
+    private async loginViaYandex(dto: RegisterDto): Promise<TokensResponse>
+    {
+        const userInfo = await this.yandexAuthService.getUserInfo(dto.tokenId);
+
+        if (!userInfo)
+        {
+            throw new UnauthorizedException();
+        }
+
+        return this.loginViaEmail(dto.provider, userInfo.default_email);
+    }
+
+    private async loginViaEmail(provider: AuthProvider, email: string): Promise<TokensResponse>
+    {
+        const existingUser = await this.userService.getUserByEmail(email);
+
+        if (!existingUser)
+        {
+            return this.createUser(provider, email);
+        }
+
+        return this.generateJwtTokens(existingUser.id);
+    }
+
+    private async generateJwtRefreshToken(userId: string): Promise<string>
     {
         return this.jwtService.sign(
             { userId },
