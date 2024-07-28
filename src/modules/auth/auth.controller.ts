@@ -34,7 +34,7 @@ export class AuthController
     @ApiResponse({ type: AuthLinkResponse })
     @Get("log-in/:provider")
     // TODO: add validation for parameters
-    async loginLink(@Param("provider") provider: AuthProvider): Promise<AuthLinkResponse>
+    public async loginLink(@Param("provider") provider: AuthProvider): Promise<AuthLinkResponse>
     {
         return this.authService.getLoginLink(provider);
     }
@@ -43,7 +43,7 @@ export class AuthController
     @ApiResponse({ type: TokensResponse, description: "Token has been set to cookie" })
     @UseGuards(GoogleOauth2Guard)
     @Get("google/redirect")
-    async loginRedirect(@Req() request: RequestWithUser, @Res() res: Response): Promise<TokensResponse>
+    public async loginRedirect(@Req() request: RequestWithUser): Promise<TokensResponse>
     {
         return this.authService.createUser(AuthProvider.GOOGLE, request.user.email);
     }

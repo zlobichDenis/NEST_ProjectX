@@ -54,7 +54,8 @@ model seller {
   logo         public_file? @relation(fields: [logo_file_id], references: [id])
   logo_file_id String?      @unique @db.Uuid
 
-  seller_address seller_address[]
+  seller_address  seller_address[]
+  seller_products seller_product[]
 }
 
 model seller_address {
@@ -82,14 +83,15 @@ model profile_address {
 }
 
 model address {
-  id           String   @unique @db.Uuid
-  country      String   @db.VarChar(255)
-  city         String   @db.VarChar(255)
-  post_index   String   @db.VarChar(255)
-  street       String   @db.VarChar(255)
+  id           String    @unique @db.Uuid
+  country      String    @db.VarChar(255)
+  city         String    @db.VarChar(255)
+  street       String    @db.VarChar(255)
   house_number Int
+  created_at   DateTime  @default(now())
   apartment    Int?
-  created_at   DateTime @default(now())
+  post_index   String?   @db.VarChar(255)
+  updated_at   DateTime?
 
   seller_addresses seller_address[]
   profile_address  profile_address[]
@@ -100,6 +102,58 @@ model public_file {
   key String @db.VarChar()
   url String @db.VarChar()
 
+  created_at DateTime  @default(now())
+  updated_at DateTime?
+
   seller  seller?
   profile profile?
+}
+
+model tag {
+  id   String @id @db.Uuid
+  name String @db.VarChar(255)
+
+  created_at   DateTime      @default(now())
+  product_tags product_tag[]
+  updated_at   DateTime?
+}
+
+enum currency {
+  RUB
+  USD
+}
+
+model product {
+  id          String   @id @db.Uuid
+  name        String   @db.VarChar(1000)
+  description String   @db.VarChar()
+  // TODO: think about price by region or currency
+  price       Float    @db.DoublePrecision
+  currency    currency
+
+  created_at DateTime  @default(now())
+  updated_at DateTime?
+
+  tags            product_tag[]
+  seller_products seller_product[]
+}
+
+model product_tag {
+  product    product @relation(fields: [product_id], references: [id])
+  product_id String  @db.Uuid
+
+  tag    tag    @relation(fields: [tag_id], references: [id])
+  tag_id String @db.Uuid
+
+  @@id([product_id, tag_id])
+}
+
+model seller_product {
+  product    product @relation(fields: [product_id], references: [id])
+  product_id String  @unique @db.Uuid
+
+  seller    seller @relation(fields: [seller_id], references: [id])
+  seller_id String @db.Uuid
+
+  created_at DateTime @default(now())
 }

@@ -1,10 +1,8 @@
 type YandexConfig = {
-  yandexInfoUrl: string;
+    yandexInfoUrl: string;
 };
 
 export const getYandexConfig = (): YandexConfig =>
 {
-  return {
-      yandexInfoUrl: process.env.YANDEX_LOGIN_INFO_URL,
-  };
+    return { yandexInfoUrl: process.env.YANDEX_LOGIN_INFO_URL };
 };

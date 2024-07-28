@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { S3BucketService } from "../../../shared/s3-bucket-client/s3-bucket.service";
 import { SellerRepository } from "../seller.repository";
 import { CreateFileDto } from "../../public-file/requests/create-file.dto";
@@ -16,12 +16,7 @@ export class LogoFileService
     {
         const seller = await this.sellerRepository.getSellerByUserId(sellerUserId);
 
-        if (seller.logoFileId)
-        {
-            throw new ForbiddenException("Logo is already uploaded");
-        }
-
-        const uploadResult = await this.s3BucketService.uploadPublicFile(file.buffer, seller.id, file.filename);
+        const uploadResult = await this.s3BucketService.uploadPublicFile(file.buffer, seller.id, file.originalname);
 
         return this.sellerRepository.attachLogo(seller.id, new CreateFileDto({
             url: uploadResult.Location,

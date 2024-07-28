@@ -6,6 +6,7 @@ import { ProfileModule } from "./modules/profile/profile.module";
 import { SellerModule } from "./modules/seller/seller.module";
 import { AddressModule } from "./modules/address/address.module";
 import { FileModule } from "./modules/public-file/file.module";
+import { ProductModule } from "./modules/product/product.module";
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { FileModule } from "./modules/public-file/file.module";
         SellerModule,
         AddressModule,
         FileModule,
+        ProductModule,
     ],
     controllers: [],
     providers: [],

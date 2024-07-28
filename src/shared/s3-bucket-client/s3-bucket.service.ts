@@ -17,7 +17,11 @@ export class S3BucketService
         this.config = { bucketName: this.configService.get("awsPublicBucketName") };
     }
 
-    public async uploadPublicFile(dataBuffer: Buffer, folderName: string, fileName: string): Promise<S3.ManagedUpload.SendData>
+    public async uploadPublicFile(
+        dataBuffer: Buffer,
+        folderName: string,
+        fileName: string,
+    ): Promise<S3.ManagedUpload.SendData>
     {
         const s3 = new S3();
 

@@ -17,8 +17,8 @@ export class OwnSellerGuard implements CanActivate
         const request = context.switchToHttp().getRequest();
 
         const profile = request.profile?.user
-          ? request.profile
-          : await this.sellerRepository.getSellerByUserId(request.user.id);
+            ? request.profile
+            : await this.sellerRepository.getSellerByUserId(request.user.id);
 
         if (profile.user.id !== request.user.id)
         {

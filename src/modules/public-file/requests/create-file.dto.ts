@@ -1,4 +1,4 @@
-import { v4 as uuid } from 'uuid';
+import { v4 as uuid } from "uuid";
 import { CreateFileBody } from "../validation/create-file.schema";
 
 export class CreateFileDto
