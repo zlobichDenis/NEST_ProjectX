@@ -9,18 +9,13 @@ export class CreateProfileDto
     @ApiProperty()
     public name: string;
 
-    @ApiProperty()
-    public photo?: string;
-
     public constructor(
         userId: string,
         givenName: string,
-        photo?: string,
     )
     {
         this.id = uuidv4();
         this.userId = userId;
         this.name = givenName;
-        this.photo = photo;
     }
 }

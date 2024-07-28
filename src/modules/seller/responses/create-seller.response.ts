@@ -24,9 +24,6 @@ export class CreateSellerResponse
     @ApiProperty()
     public contactPhoneNumber: string;
 
-    @ApiProperty()
-    public logo: string;
-
     @ApiPropertyOptional()
     public updatedAt?: Date;
 
@@ -36,7 +33,6 @@ export class CreateSellerResponse
         fullName,
         createdAt,
         description,
-        logo,
         contactPhoneNumber,
         userId,
         updatedAt,
@@ -47,7 +43,6 @@ export class CreateSellerResponse
         this.fullName = fullName;
         this.contactPhoneNumber = contactPhoneNumber;
         this.createdAt = createdAt;
-        this.logo = logo;
         this.userId = userId;
         this.updatedAt = updatedAt;
         this.description = description;

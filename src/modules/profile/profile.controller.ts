@@ -39,7 +39,6 @@ export class ProfileController
         const createProfileDto = new CreateProfileDto(
             request.user.id,
             createProfile.name,
-            createProfile.photo,
         );
 
         return this.profileService.createUserProfile(createProfileDto);

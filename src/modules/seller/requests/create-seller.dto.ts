@@ -18,9 +18,6 @@ export class CreateSellerDto
     public description: string;
 
     @ApiProperty()
-    public logo: string;
-
-    @ApiProperty()
     public contactPhoneNumber: string;
 
     @ApiProperty({ type: CreateAddressDto })
@@ -30,7 +27,6 @@ export class CreateSellerDto
         displayName,
         fullName,
         description,
-        logo,
         contactPhoneNumber,
         address,
     }: CreateSellerBody)
@@ -39,7 +35,6 @@ export class CreateSellerDto
         this.displayName = displayName;
         this.fullName = fullName;
         this.description = description;
-        this.logo = logo;
         this.contactPhoneNumber = contactPhoneNumber;
         this.address = new CreateAddressDto(address);
     }

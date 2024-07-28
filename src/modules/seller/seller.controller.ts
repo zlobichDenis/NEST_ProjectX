@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Req, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
 import { SellerService } from "./seller.service";
 import { CreateSellerBody, createSellerSchema } from "./validation/create-seller.validation";
 import { JwtAuthGuard } from "../auth/guards";
@@ -20,10 +21,11 @@ export class SellerController
 
     @ApiCreatedResponse({ type: CreateSellerResponse })
     @ApiBody({ type: CreateSellerDto })
+    @UseInterceptors(FileInterceptor("logo"))
     @Post("/my")
     public async createOwnSeller(
         @Req() request: RequestWithUser,
-            @Body(new ZodValidationPipe(createSellerSchema)) dto: CreateSellerBody
+            @Body(new ZodValidationPipe(createSellerSchema)) dto: CreateSellerBody,
     ): Promise<CreateSellerResponse>
     {
         const createSellerDto = new CreateSellerDto(dto).setUserId(request.user.id);

@@ -29,4 +29,11 @@ export class AddressRepository
 
         return new AddressEntity(createdAddress);
     }
+
+    public async getAddressById(id: string): Promise<AddressEntity>
+    {
+        const address = await this.prismaService.address.findFirst({ where: { id: id } });
+
+        return new AddressEntity(address);
+    }
 }

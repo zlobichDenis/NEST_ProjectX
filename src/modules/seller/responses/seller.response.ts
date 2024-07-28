@@ -1,6 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { SellerEntity } from "../entities/seller.entity";
 import { UserResponse } from "../../user/responses";
+import { AddressEntity } from "../../address/entities/address.entity";
+import { PublicFileEntity } from "../../public-file/entities/public-file.entity";
 
 export class SellerResponse
 {
@@ -26,10 +28,16 @@ export class SellerResponse
     public contactPhoneNumber: string;
 
     @ApiProperty()
-    public logo: string;
+    public user: UserResponse;
 
     @ApiProperty()
-    public user: UserResponse;
+    public address: AddressEntity;
+
+    @ApiPropertyOptional()
+    public logoFileId?: string;
+
+    @ApiPropertyOptional()
+    public logo?: PublicFileEntity;
 
     @ApiPropertyOptional()
     public updatedAt?: Date;
@@ -45,6 +53,8 @@ export class SellerResponse
         user,
         userId,
         updatedAt,
+        address,
+        logoFileId,
     }: SellerEntity)
     {
         this.id = id;
@@ -52,10 +62,12 @@ export class SellerResponse
         this.fullName = fullName;
         this.contactPhoneNumber = contactPhoneNumber;
         this.createdAt = createdAt;
+        this.logoFileId = logoFileId;
         this.logo = logo;
-        this.user = user;
+        this.user = new UserResponse(user);
         this.userId = userId;
         this.updatedAt = updatedAt;
         this.description = description;
+        this.address = address;
     }
 }

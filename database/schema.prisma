@@ -27,12 +27,14 @@ model user {
 model profile {
   id           String    @id @db.Uuid
   display_name String    @db.VarChar(255)
-  photo        String?
   created_at   DateTime  @default(now())
   updated_at   DateTime?
 
   user    user?   @relation(fields: [user_id], references: [id])
   user_id String? @unique @db.Uuid
+
+  photo         public_file? @relation(fields: [photo_file_id], references: [id])
+  photo_file_id String?      @unique @db.Uuid
 
   profile_address profile_address[]
 }
@@ -42,13 +44,15 @@ model seller {
   display_name         String    @db.VarChar(255)
   full_name            String    @unique @db.VarChar(500)
   description          String    @db.VarChar(2000)
-  logo                 String
   contact_phone_number String    @db.VarChar(2000)
   created_at           DateTime  @default(now())
   updated_at           DateTime?
 
   user    user?   @relation(fields: [user_id], references: [id])
   user_id String? @unique @db.Uuid
+
+  logo         public_file? @relation(fields: [logo_file_id], references: [id])
+  logo_file_id String?      @unique @db.Uuid
 
   seller_address seller_address[]
 }
@@ -89,4 +93,13 @@ model address {
 
   seller_addresses seller_address[]
   profile_address  profile_address[]
+}
+
+model public_file {
+  id  String @unique @db.Uuid
+  key String @db.VarChar()
+  url String @db.VarChar()
+
+  seller  seller?
+  profile profile?
 }

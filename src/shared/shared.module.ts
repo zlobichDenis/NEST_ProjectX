@@ -14,6 +14,7 @@ import {
 import { PrismaService } from "./prisma-client";
 import { CloudWatchService } from "./cloud-watch-client";
 import { Logger } from "./logger";
+import { S3BucketService } from "./s3-bucket-client/s3-bucket.service";
 
 @Global()
 @Module({
@@ -40,11 +41,10 @@ import { Logger } from "./logger";
                 GOOGLE_API_CLIENT_ID: Joi.string(),
                 GOOGLE_API_CLIENT_SECRET: Joi.string(),
                 GOOGLE_API_REDIRECT_URL: Joi.string(),
-                // AWS_REGION: Joi.string().valid().valid("eu-north-1"),
-                // AWS_ACCESS_KEY_ID: Joi.string(),
-                // AWS_SECRET_ACCESS_KEY: Joi.string(),
-                // AWS_CLOUDWATCH_GROUP_NAME: Joi.string().valid("api-projectx-local", "api-projectx-develop"),
-                // AWS_CLOUDWATCH_STREAM_NAME: Joi.string(),
+                AWS_REGION: Joi.string().valid().valid("eu-north-1"),
+                AWS_ACCESS_KEY_ID: Joi.string(),
+                AWS_SECRET_ACCESS_KEY: Joi.string(),
+                AWS_PUBLIC_BUCKET_NAME: Joi.string(),
                 JWT_SECRET: Joi.string(),
                 JWT_EXPIRATION_TIME: Joi.number(),
                 BASIC_USERNAME: Joi.string(),
@@ -53,7 +53,7 @@ import { Logger } from "./logger";
             }),
         }),
     ],
-    providers: [PrismaService, CloudWatchService, Logger, ConfigService],
-    exports: [PrismaService, CloudWatchService, ConfigService],
+    providers: [PrismaService, CloudWatchService, Logger, ConfigService, S3BucketService],
+    exports: [PrismaService, CloudWatchService, ConfigService, S3BucketService],
 })
 export class SharedModule {}

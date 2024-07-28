@@ -11,13 +11,12 @@ export class ProfileEntity
 
     public user?: UserEntity;
 
-    public constructor({ id, display_name, created_at, updated_at, photo }: ProfileBaseEntity)
+    public constructor({ id, display_name, created_at, updated_at }: ProfileBaseEntity)
     {
         this.id = id;
         this.displayName = display_name;
         this.createdAt = created_at ? new Date(created_at) : undefined;
         this.updatedAt = updated_at ? new Date(updated_at) : undefined;
-        this.photo = photo;
     }
 
     public setUser(user?: UserBaseEntity): ProfileEntity

@@ -31,7 +31,6 @@ export class ProfileRepository
 
     public async createProfile({
         id,
-        photo,
         name,
         userId,
     }: CreateProfileDto): Promise<ProfileEntity | null>
@@ -40,7 +39,6 @@ export class ProfileRepository
             data: {
                 id,
                 display_name:  name,
-                photo,
                 user_id: userId,
             },
         });

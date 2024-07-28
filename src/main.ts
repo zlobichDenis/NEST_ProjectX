@@ -1,6 +1,7 @@
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { ConfigService } from "@nestjs/config";
+import { Config, Credentials } from "aws-sdk";
 import * as cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
 import { Logger } from "./shared/logger";
@@ -9,26 +10,28 @@ import { Logger } from "./shared/logger";
 async function bootstrap()
 {
     const app = await NestFactory.create(AppModule);
+    const configService = app.get(ConfigService);
 
-    const config = new DocumentBuilder()
+    const swaggerConfig = new DocumentBuilder()
         .setTitle("ProjectX API")
         .setDescription("")
         .setVersion("1.0")
         .addBearerAuth()
         .build();
 
-    const document = SwaggerModule.createDocument(app, config);
+    new Config({
+        credentials: new Credentials({
+            accessKeyId: configService.get("awsAccessKeyId"),
+            secretAccessKey: configService.get("awsSecretAccessKey"),
+        }),
+        region: configService.get("awsRegion"),
+    });
+
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
     SwaggerModule.setup("api", app, document);
-
-    const configService = app.get(ConfigService);
-
     const port = configService.get("port");
 
     app.useLogger(app.get(Logger));
-    // app.useGlobalPipes(new ValidationPipe({
-    //     whitelist: true,
-    //     forbidNonWhitelisted: true,
-    // }));
 
     app.enableCors({
         "origin": "*",

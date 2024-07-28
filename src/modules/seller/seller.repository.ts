@@ -5,6 +5,8 @@ import { SellerEntity } from "./entities/seller.entity";
 import { AddressRepository } from "../address/address.repository";
 import { SellerAddressRepository } from "./repositories/seller-address.repository";
 import { CreateSellerAddressDto } from "./requests/create-seller-address.dto";
+import { PublicFileRepository } from "../public-file/repositories/public-file.repository";
+import { CreateFileDto } from "../public-file/requests/create-file.dto";
 
 @Injectable()
 export class SellerRepository
@@ -13,6 +15,7 @@ export class SellerRepository
         private readonly prismaService: PrismaService,
         private readonly addressRepository: AddressRepository,
         private readonly sellerAddressRepository: SellerAddressRepository,
+        private readonly publicFileRepository: PublicFileRepository,
     ) {}
 
     public async createSeller({ address: createAddressDto, ...dto }: CreateSellerDto): Promise<SellerEntity>
@@ -26,7 +29,6 @@ export class SellerRepository
                     display_name: dto.displayName,
                     full_name: dto.fullName,
                     description: dto.description,
-                    logo: dto.logo,
                     contact_phone_number: dto.contactPhoneNumber,
                 },
             });
@@ -53,9 +55,31 @@ export class SellerRepository
     {
         const sellerEntity = await this.prismaService.seller.findUnique({
             where: { user_id: userId },
-            include: { user: true },
+            include: { user: true, logo: true, seller_address: true },
         });
 
-        return sellerEntity ? new SellerEntity(sellerEntity).setUser(sellerEntity.user) : null;
+        const address = await this.addressRepository.getAddressById(sellerEntity.seller_address[0].address_id);
+
+        return sellerEntity
+            ? new SellerEntity(sellerEntity)
+                .setUser(sellerEntity.user)
+                .setAddress(address)
+                .setLogo(sellerEntity.logo)
+            : null;
+    }
+
+    public async attachLogo(sellerId: string, logoFile: CreateFileDto): Promise<SellerEntity>
+    {
+        return this.prismaService.$transaction(async (transaction) =>
+        {
+            const publicFile = await this.publicFileRepository.createFile(logoFile, transaction);
+
+            const sellerEntity = await transaction.seller.update({
+                where: { id : sellerId },
+                data: { logo_file_id: publicFile.id },
+            });
+
+            return new SellerEntity(sellerEntity);
+        });
     }
 }
