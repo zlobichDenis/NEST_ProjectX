@@ -1,0 +1,105 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum provider {
+  GOOGLE
+  YANDEX
+}
+
+model user {
+  id                    String    @id @db.Uuid
+  email                 String    @unique @db.VarChar(100)
+  provider              provider
+  current_refresh_token String?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime?
+
+  seller  seller?
+  profile profile?
+}
+
+model profile {
+  id           String    @id @db.Uuid
+  display_name String    @db.VarChar(255)
+  created_at   DateTime  @default(now())
+  updated_at   DateTime?
+
+  user    user?   @relation(fields: [user_id], references: [id])
+  user_id String? @unique @db.Uuid
+
+  photo         public_file? @relation(fields: [photo_file_id], references: [id])
+  photo_file_id String?      @unique @db.Uuid
+
+  profile_address profile_address[]
+}
+
+model seller {
+  id                   String    @id @db.Uuid
+  display_name         String    @db.VarChar(255)
+  full_name            String    @unique @db.VarChar(500)
+  description          String    @db.VarChar(2000)
+  contact_phone_number String    @db.VarChar(2000)
+  created_at           DateTime  @default(now())
+  updated_at           DateTime?
+
+  user    user?   @relation(fields: [user_id], references: [id])
+  user_id String? @unique @db.Uuid
+
+  logo         public_file? @relation(fields: [logo_file_id], references: [id])
+  logo_file_id String?      @unique @db.Uuid
+
+  seller_address seller_address[]
+}
+
+model seller_address {
+  seller    seller @relation(fields: [seller_id], references: [id])
+  seller_id String @db.Uuid
+
+  address    address @relation(fields: [address_id], references: [id])
+  address_id String  @db.Uuid
+
+  created_at DateTime @default(now())
+
+  @@id([seller_id, address_id])
+}
+
+model profile_address {
+  profile    profile @relation(fields: [profile_id], references: [id])
+  profile_id String  @db.Uuid
+
+  address    address @relation(fields: [address_id], references: [id])
+  address_id String  @db.Uuid
+
+  created_at DateTime @default(now())
+
+  @@id([profile_id, address_id])
+}
+
+model address {
+  id           String   @unique @db.Uuid
+  country      String   @db.VarChar(255)
+  city         String   @db.VarChar(255)
+  post_index   String   @db.VarChar(255)
+  street       String   @db.VarChar(255)
+  house_number Int
+  apartment    Int?
+  created_at   DateTime @default(now())
+
+  seller_addresses seller_address[]
+  profile_address  profile_address[]
+}
+
+model public_file {
+  id  String @unique @db.Uuid
+  key String @db.VarChar()
+  url String @db.VarChar()
+
+  seller  seller?
+  profile profile?
+}

@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands: 
+      - npm i -g yarn
+      - npm i -g typescript
+      - npm i -g @nestjs/cli
+      - yarn add ts-node @types/node
+  build:
+    commands:
+      - yarn install --frozen-lockfile
+      - yarn prisma:user:generate
+      - yarn build
+  # post_build:
+  #    commands:
+      # - yarn test // uncomment if there are tests in project
+artifacts:
+  files:
+    - '**/*'
+  discard-paths: yes
