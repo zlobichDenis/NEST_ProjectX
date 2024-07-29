@@ -15,7 +15,6 @@ export class SellerAddressRepository
     ): Promise<SellerAddressEntity>
     {
         const client = transaction || this.prismaService;
-
         const sellerAddress = await client.seller_address.create({
             data: {
                 address_id: dto.addressId,

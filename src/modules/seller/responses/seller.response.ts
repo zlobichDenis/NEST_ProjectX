@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { SellerEntity } from "../entities/seller.entity";
 import { UserResponse } from "../../user/responses";
-import { AddressEntity } from "../../address/entities/address.entity";
-import { PublicFileEntity } from "../../public-file/entities/public-file.entity";
+import { AddressResponse } from "../../address/responses/address.response";
+import { PublicFileResponse } from "../../public-file/responses/public-file.response";
 
 export class SellerResponse
 {
@@ -30,14 +30,14 @@ export class SellerResponse
     @ApiProperty()
     public user: UserResponse;
 
-    @ApiProperty()
-    public address: AddressEntity;
+    @ApiProperty({ isArray: true, type: AddressResponse })
+    public addresses: AddressResponse[];
 
     @ApiPropertyOptional()
-    public logoFileId?: string;
+    public logoImageId?: string;
 
     @ApiPropertyOptional()
-    public logo?: PublicFileEntity;
+    public logo?: PublicFileResponse;
 
     @ApiPropertyOptional()
     public updatedAt?: Date;
@@ -53,8 +53,8 @@ export class SellerResponse
         user,
         userId,
         updatedAt,
-        address,
-        logoFileId,
+        addresses,
+        logoImageId,
     }: SellerEntity)
     {
         this.id = id;
@@ -62,12 +62,12 @@ export class SellerResponse
         this.fullName = fullName;
         this.contactPhoneNumber = contactPhoneNumber;
         this.createdAt = createdAt;
-        this.logoFileId = logoFileId;
-        this.logo = logo;
+        this.logoImageId = logoImageId;
+        this.logo = logo ? new PublicFileResponse(logo) : null;
         this.user = new UserResponse(user);
         this.userId = userId;
         this.updatedAt = updatedAt;
         this.description = description;
-        this.address = address;
+        this.addresses = addresses.map((address) => new AddressResponse(address));
     }
 }

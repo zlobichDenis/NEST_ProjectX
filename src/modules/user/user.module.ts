@@ -5,8 +5,14 @@ import { UserEventListener } from "./events/user.listener";
 
 @Module({
     imports: [],
-    providers: [UserRepository, UserService, UserEventListener],
-    exports: [UserService, UserRepository],
+    providers: [
+        UserRepository,
+        UserService,
+        UserEventListener],
+    exports: [
+        UserService,
+        UserRepository,
+    ],
     controllers: [],
 })
 export class UserModule {}

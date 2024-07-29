@@ -4,11 +4,12 @@ import { ConfigService } from "@nestjs/config";
 import { Config, Credentials } from "aws-sdk";
 import * as cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
-import { Logger } from "./shared/logger";
+import { LoggerService } from "./shared/logger";
 
 
 async function bootstrap()
 {
+    // TODO: implement logger service
     const app = await NestFactory.create(AppModule);
     const configService = app.get(ConfigService);
 
@@ -31,7 +32,7 @@ async function bootstrap()
     SwaggerModule.setup("api", app, document);
     const port = configService.get("port");
 
-    app.useLogger(app.get(Logger));
+    app.useLogger(app.get(LoggerService));
 
     app.enableCors({
         "origin": "*",

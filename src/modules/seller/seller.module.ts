@@ -7,11 +7,29 @@ import { SellerAddressRepository } from "./repositories/seller-address.repositor
 import { FileModule } from "../public-file/file.module";
 import { LogoFileController } from "./controllers/logo-file.controller";
 import { LogoFileService } from "./services/logo-file.service";
+import { ImageModule } from "../image/image.module";
+import { VideoModule } from "../video/video.module";
 
 @Module({
-    imports: [AddressModule, FileModule],
-    controllers: [SellerController, LogoFileController],
-    providers: [SellerService, SellerRepository, SellerAddressRepository, LogoFileService],
-    exports: [SellerService, SellerRepository],
+    imports: [
+        AddressModule,
+        FileModule,
+        ImageModule,
+        VideoModule,
+    ],
+    controllers: [
+        SellerController,
+        LogoFileController,
+    ],
+    providers: [
+        SellerService,
+        SellerRepository,
+        SellerAddressRepository,
+        LogoFileService,
+    ],
+    exports: [
+        SellerService,
+        SellerRepository,
+    ],
 })
 export class SellerModule {}

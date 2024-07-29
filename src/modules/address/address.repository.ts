@@ -24,6 +24,7 @@ export class AddressRepository
                 city: dto.city,
                 house_number: dto.houseNumber,
                 post_index: dto.postIndex,
+                apartment: dto.apartment,
             },
         });
 
@@ -35,5 +36,12 @@ export class AddressRepository
         const address = await this.prismaService.address.findFirst({ where: { id: id } });
 
         return new AddressEntity(address);
+    }
+
+    public async getAddressBatchByIds(ids: string[]): Promise<AddressEntity[]>
+    {
+        const addresses = await this.prismaService.address.findMany({ where: { id: { in: ids } } });
+
+        return addresses.map((address) => new AddressEntity(address));
     }
 }

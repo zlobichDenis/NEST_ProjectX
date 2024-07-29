@@ -12,12 +12,13 @@ export class SellerEntity
     public description: string;
     public contactPhoneNumber: string;
     public createdAt: Date;
-    public logoFileId: string;
+    public logoImageId: string;
+    public contactEmail: string;
 
     public logo?: PublicFileEntity;
     public updatedAt?: Date;
     public user?: UserEntity;
-    public address?: AddressEntity;
+    public addresses?: AddressEntity[];
 
     public constructor({
         user_id,
@@ -28,7 +29,8 @@ export class SellerEntity
         id,
         display_name,
         full_name,
-        logo_file_id,
+        logo_id,
+        contact_email,
     }: SellerBaseEntity)
     {
         this.id = id;
@@ -39,7 +41,8 @@ export class SellerEntity
         this.updatedAt = updated_at ? new Date(updated_at) : null;
         this.createdAt = new Date(created_at);
         this.contactPhoneNumber = contact_phone_number;
-        this.logoFileId = logo_file_id;
+        this.logoImageId = logo_id;
+        this.contactEmail = contact_email;
     }
 
     public setUser(user: UserBaseEntity): SellerEntity
@@ -49,9 +52,9 @@ export class SellerEntity
         return this;
     }
 
-    public setAddress(address: AddressEntity): SellerEntity
+    public setAddresses(addresses: AddressEntity[]): SellerEntity
     {
-        this.address = address;
+        this.addresses = addresses;
 
         return this;
     }

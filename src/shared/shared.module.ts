@@ -13,7 +13,7 @@ import {
 } from "src/core/config";
 import { PrismaService } from "./prisma-client";
 import { CloudWatchService } from "./cloud-watch-client";
-import { Logger } from "./logger";
+import { LoggerService } from "./logger";
 import { S3BucketService } from "./s3-bucket-client/s3-bucket.service";
 
 @Global()
@@ -53,7 +53,7 @@ import { S3BucketService } from "./s3-bucket-client/s3-bucket.service";
             }),
         }),
     ],
-    providers: [PrismaService, CloudWatchService, Logger, ConfigService, S3BucketService],
-    exports: [PrismaService, CloudWatchService, ConfigService, S3BucketService],
+    providers: [PrismaService, CloudWatchService, LoggerService, ConfigService, S3BucketService],
+    exports: [PrismaService, CloudWatchService, ConfigService, S3BucketService, LoggerService],
 })
 export class SharedModule {}

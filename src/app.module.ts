@@ -7,6 +7,8 @@ import { SellerModule } from "./modules/seller/seller.module";
 import { AddressModule } from "./modules/address/address.module";
 import { FileModule } from "./modules/public-file/file.module";
 import { ProductModule } from "./modules/product/product.module";
+import { ImageModule } from "./modules/image/image.module";
+import { VideoModule } from "./modules/video/video.module";
 
 @Module({
     imports: [
@@ -18,6 +20,8 @@ import { ProductModule } from "./modules/product/product.module";
         AddressModule,
         FileModule,
         ProductModule,
+        ImageModule,
+        VideoModule,
     ],
     controllers: [],
     providers: [],

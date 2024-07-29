@@ -53,6 +53,7 @@ export class AuthController
     @Get("refresh")
     public async refresh(@Req() request: RequestWithUser, @Res() response: Response): Promise<Response>
     {
+        // TODO: rewrite to return json
         const accessToken = this.authService.generateJwtAccessToken(request.user.id);
 
         response.cookie(

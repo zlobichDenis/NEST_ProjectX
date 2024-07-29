@@ -12,13 +12,11 @@ export class LogoFileService
         private readonly sellerRepository: SellerRepository,
     ) {}
 
-    public async uploadLogo(sellerUserId: string, file: Express.Multer.File): Promise<SellerEntity>
+    public async uploadLogo(sellerId: string, file: Express.Multer.File): Promise<SellerEntity>
     {
-        const seller = await this.sellerRepository.getSellerByUserId(sellerUserId);
+        const uploadResult = await this.s3BucketService.uploadPublicFile(file.buffer, sellerId, file.originalname);
 
-        const uploadResult = await this.s3BucketService.uploadPublicFile(file.buffer, seller.id, file.originalname);
-
-        return this.sellerRepository.attachLogo(seller.id, new CreateFileDto({
+        return this.sellerRepository.attachLogo(sellerId, new CreateFileDto({
             url: uploadResult.Location,
             key: uploadResult.Key,
         }));

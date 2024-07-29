@@ -1,7 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { v4 as uuidv4 } from "uuid";
 import { CreateSellerBody } from "../validation/create-seller.validation";
-import { CreateAddressDto } from "../../address/requests/create-address.dto";
 
 export class CreateSellerDto
 {
@@ -20,15 +19,42 @@ export class CreateSellerDto
     @ApiProperty()
     public contactPhoneNumber: string;
 
-    @ApiProperty({ type: CreateAddressDto })
-    public address: CreateAddressDto;
+    @ApiProperty()
+    public logo: Express.Multer.File;
+
+    @ApiProperty()
+    public country: string;
+
+    @ApiProperty()
+    public city: string;
+
+    @ApiProperty()
+    public postIndex: string;
+
+    @ApiProperty()
+    public street: string;
+
+    @ApiProperty()
+    public houseNumber: number;
+
+    @ApiProperty()
+    public contactEmail: string;
+
+    @ApiPropertyOptional()
+    public apartment?: number;
 
     public constructor({
         displayName,
         fullName,
         description,
         contactPhoneNumber,
-        address,
+        country,
+        city,
+        postIndex,
+        apartment,
+        street,
+        houseNumber,
+        contactEmail,
     }: CreateSellerBody)
     {
         this.id = uuidv4();
@@ -36,12 +62,25 @@ export class CreateSellerDto
         this.fullName = fullName;
         this.description = description;
         this.contactPhoneNumber = contactPhoneNumber;
-        this.address = new CreateAddressDto(address);
+        this.street = street;
+        this.country = country;
+        this.city = city;
+        this.postIndex = postIndex;
+        this.apartment = apartment;
+        this.houseNumber = houseNumber;
+        this.contactEmail = contactEmail;
     }
 
     public setUserId(userId: string): CreateSellerDto
     {
         this.userId = userId;
+
+        return this;
+    }
+
+    public setLogo(logo: Express.Multer.File): CreateSellerDto
+    {
+        this.logo = logo;
 
         return this;
     }

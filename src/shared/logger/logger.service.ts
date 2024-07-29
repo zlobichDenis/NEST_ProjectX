@@ -14,7 +14,7 @@ enum LogLevel
 }
 
 @Injectable()
-export class Logger extends ConsoleLogger
+export class LoggerService extends ConsoleLogger
 {
     public constructor(private readonly cloudWatchService: CloudWatchService)
     {
@@ -25,14 +25,21 @@ export class Logger extends ConsoleLogger
     {
         super.log(message);
 
-        this.cloudWatchService.log(this.logMessageToString(LogLevel.LOG, message));
+        this.logMessage(message);
+        // this.cloudWatchService.log(this.logMessageToString(LogLevel.LOG, message));
     }
 
     public error(message: LogMessage): void
     {
         super.error(message);
 
-        this.cloudWatchService.log(this.logMessageToString(LogLevel.ERROR, message));
+        this.logMessage(message);
+        // this.cloudWatchService.log(this.logMessageToString(LogLevel.ERROR, message));
+    }
+
+    public logMessage(message: LogMessage): void
+    {
+        console.log(message);
     }
 
     private logMessageToString(level: LogLevel, message: LogMessage): string
