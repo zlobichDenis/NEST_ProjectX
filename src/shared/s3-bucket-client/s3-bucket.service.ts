@@ -11,6 +11,7 @@ type S3BucketClientServiceConfig = {
 export class S3BucketService
 {
     private config: S3BucketClientServiceConfig;
+    private s3Client = new S3();
 
     public constructor(private readonly configService: ConfigService)
     {
@@ -23,9 +24,7 @@ export class S3BucketService
         fileName: string,
     ): Promise<S3.ManagedUpload.SendData>
     {
-        const s3 = new S3();
-
-        const uploadResult = await s3.upload({
+        const uploadResult = await this.s3Client.upload({
             Bucket: this.configService.get("awsPublicBucketName"),
             Body: dataBuffer,
             Key: `${folderName}/${uuid()}-${fileName}`,
@@ -34,5 +33,13 @@ export class S3BucketService
         console.log(uploadResult);
 
         return uploadResult;
+    }
+
+    public async uploadPublicFiles(
+        files: Express.Multer.File[],
+        folderName: string,
+    ): Promise<S3.ManagedUpload.SendData[]>
+    {
+        return Promise.all(files.map((file) => this.uploadPublicFile(file.buffer, folderName, file.originalname)));
     }
 }

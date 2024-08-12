@@ -1,14 +1,21 @@
 import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { v4 as uuid } from "uuid";
 import { PrismaService } from "../../shared/prisma-client";
 import { ImageEntity } from "./entities/image.entity";
 import { CreateImageDto } from "./requests/create-image.dto";
 import { PrismaTransaction } from "../../shared/prisma-client/types";
 import { PublicFileEntity } from "../public-file/entities/public-file.entity";
+import { PublicFileRepository } from "../public-file/repositories/public-file.repository";
+import { CreateFileDto } from "../public-file/requests/create-file.dto";
 
 @Injectable()
 export class ImageRepository
 {
-    public constructor(private readonly prismaService: PrismaService) {}
+    public constructor(
+        private readonly prismaService: PrismaService,
+        private readonly publicFileRepository: PublicFileRepository,
+    ) {}
 
     public async createImage(dto: CreateImageDto, transaction?: PrismaTransaction): Promise<ImageEntity>
     {
@@ -22,6 +29,30 @@ export class ImageRepository
         });
 
         return new ImageEntity(photo);
+    }
+
+    public async createImages(
+        dtos: CreateFileDto[],
+        transaction: PrismaTransaction = this.prismaService,
+    ): Promise<ImageEntity[]>
+    {
+        const createdFiles = await this.publicFileRepository.createFiles(dtos, transaction);
+
+        const createImagesDto = createdFiles.map((file) => new CreateImageDto({ fileId: file.id }));
+
+        await transaction.image.createMany({
+            data: createImagesDto.map(({ id, fileId }) => ({
+                id,
+                file_id: fileId,
+            })),
+        });
+
+        const createdImages = await transaction.image.findMany({
+            where:
+              { id: { in: createImagesDto.map(({ id }) => id) } },
+        });
+
+        return createdImages.map((image) => new ImageEntity(image));
     }
 
     public async getImageById(id: string): Promise<ImageEntity>

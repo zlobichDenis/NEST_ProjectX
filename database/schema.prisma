@@ -84,7 +84,7 @@ model seller_address {
   seller_id String @db.Uuid
 
   address    address @relation(fields: [address_id], references: [id], onDelete: Cascade)
-  address_id String  @db.Uuid
+  address_id String  @unique @db.Uuid
 
   created_at DateTime @default(now())
 
@@ -132,7 +132,7 @@ model public_file {
 
 model tag {
   id   String @id @db.Uuid
-  name String @db.VarChar(255)
+  name String @unique @db.VarChar(255)
 
   created_at   DateTime      @default(now())
   product_tags product_tag[]
@@ -152,7 +152,7 @@ model region {
 model product {
   id                String            @id @db.Uuid
   name              String            @db.VarChar(1000)
-  description       String            @db.VarChar()
+  description       String?           @db.VarChar()
   price             Float             @db.DoublePrecision
   status            product_status
   moderation_status moderation_status
@@ -221,7 +221,8 @@ model seller_product {
 
 model video {
   id          String   @id @db.Uuid
-  likes_count Int
+  likes_count Int      @default(0)
+  name        String   @db.VarChar(510)
   created_at  DateTime @default(now())
 
   file    public_file @relation(fields: [file_id], references: [id], onDelete: Cascade)

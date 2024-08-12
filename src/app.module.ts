@@ -9,6 +9,7 @@ import { FileModule } from "./modules/public-file/file.module";
 import { ProductModule } from "./modules/product/product.module";
 import { ImageModule } from "./modules/image/image.module";
 import { VideoModule } from "./modules/video/video.module";
+import { TagModule } from "./modules/tag/tag.module";
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { VideoModule } from "./modules/video/video.module";
         ProductModule,
         ImageModule,
         VideoModule,
+        TagModule,
     ],
     controllers: [],
     providers: [],
