@@ -1,75 +1,41 @@
 import { Injectable } from "@nestjs/common";
 import { moderation_status as ModerationStatus } from "@prisma/client";
 import { PrismaService } from "../../shared/prisma-client";
-import { CreateSellerProductDto } from "./requests/create-seller-product.dto";
 import { ProductEntity } from "./entites/product.entity";
-import { ProductTagRepository } from "./repositories/product-tag.repository";
-import { CreateProductTagDto } from "./requests/create-product-tag.dto";
-import { ProductVideoRepository } from "./repositories/product-video.repository";
-import { CreateProductVideoDto } from "./requests/create-product-video.dto";
-import { CreateSellerProductRelationDto } from "./requests/create-seller-product-relation.dto";
-import { SellerProductRepository } from "./repositories/seller-product.repository";
-import { GetProductListQuery } from "./validation/get-product-list-query.schema";
+import { GetProductListQuery } from "../seller/validation/get-product-list-query.schema";
 import { TagEntity } from "../tag/entites/tag.entity";
 import { PublicFileEntity } from "../public-file/entities/public-file.entity";
-import { ProductPhotoRepository } from "./repositories/product-photo.repository";
-import { CreateProductPhotoDto } from "./requests/create-product-photo.dto";
+import { PrismaTransaction } from "../../shared/prisma-client/types";
+import { CreateProductDto } from "./requests/create-product.dto";
 
 @Injectable()
 export class ProductRepository
 {
-    public constructor(
-        private readonly prismaService: PrismaService,
-        private readonly productTagRepository: ProductTagRepository,
-        private readonly productVideoRepository: ProductVideoRepository,
-        private readonly sellerProductRepository: SellerProductRepository,
-        private readonly productPhotoRepository: ProductPhotoRepository,
-    ) {}
+    public constructor(private readonly prismaService: PrismaService) {}
 
-    public async createSellerProduct(
+    public async createProduct(
         {
             id,
             name,
             status,
             description,
             price,
-            tags,
-            videoEntity,
-            photos,
-        }: CreateSellerProductDto,
-        sellerId: string,
+        }: CreateProductDto,
+        transaction: PrismaTransaction = this.prismaService
     ): Promise<ProductEntity>
     {
-        return this.prismaService.$transaction(async (transaction) =>
-        {
-            const product = await transaction.product.create({
-                data: {
-                    id,
-                    name,
-                    description,
-                    status,
-                    price,
-                    moderation_status: ModerationStatus.IN_PROGRESS,
-                },
-            });
-
-            const createSellerProductRelationDto = new CreateSellerProductRelationDto(sellerId, product.id);
-            await this.sellerProductRepository.createSellerProduct(createSellerProductRelationDto, transaction);
-
-            const createProductTagsDtos = tags.map((tag) => new CreateProductTagDto(product.id, tag));
-            await this.productTagRepository.createProductTags(createProductTagsDtos, transaction);
-
-            const createProductPhotoDtos = photos.map((photo) => new CreateProductPhotoDto(photo.id, product.id));
-            await this.productPhotoRepository.createProductPhotos(createProductPhotoDtos, transaction);
-
-            const createProductVideoDto = new CreateProductVideoDto(videoEntity.id, product.id);
-            await this.productVideoRepository.createProductVideo(
-                createProductVideoDto,
-                transaction
-            );
-
-            return new ProductEntity(product);
+        const product = await transaction.product.create({
+            data: {
+                id,
+                name,
+                description,
+                status,
+                price,
+                moderation_status: ModerationStatus.IN_PROGRESS,
+            },
         });
+
+        return new ProductEntity(product);
     }
 
     public async getProducts(query: GetProductListQuery): Promise<ProductEntity[]>
@@ -115,5 +81,15 @@ export class ProductRepository
                     .setVideos(videos)
             );
         });
+    }
+
+    public async deleteProductById(
+        productId: string,
+        transaction: PrismaTransaction = this.prismaService,
+    ): Promise<ProductEntity>
+    {
+        const deletedProduct = await transaction.product.delete({ where: { id: productId } });
+
+        return new ProductEntity(deletedProduct);
     }
 }

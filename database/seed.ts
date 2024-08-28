@@ -1,9 +1,10 @@
 import { PrismaClient } from  "@prisma/client";
+import { currency as Currency, region_key as RegionKey } from "@prisma/client";
 import { v4 as uuid } from "uuid";
 
 const prisma = new PrismaClient();
 
-async function main()
+async function seedTags()
 {
     const tags = [
         {
@@ -17,6 +18,26 @@ async function main()
     ];
 
     await prisma.tag.createMany({ data: tags });
+}
+
+async function seedRegions()
+{
+    const regions = [
+        {
+            id: uuid(),
+            currency: Currency.RUB,
+            key: RegionKey.RU,
+            display_name: 'Russia',
+        }
+    ];
+
+    await prisma.region.createMany({ data: regions });
+}
+
+async function main()
+{
+    await seedTags();
+    await seedRegions();
 }
 
 main()

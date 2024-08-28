@@ -21,10 +21,12 @@ export class YandexAuthService
 
     public async getUserInfo(token: string): Promise<YandexUserInfoType>
     {
-        const { data: userInfo } = await firstValueFrom(this.httpService.get<YandexUserInfoType>(this.config.infoUrl, { headers: { Authorization: `OAuth ${token}` } }).pipe(catchError((error: AxiosError) =>
-        {
-            throw "Yandex request failed";
-        }),));
+        const { data: userInfo } = await firstValueFrom(this.httpService
+            .get<YandexUserInfoType>(this.config.infoUrl, { headers: { Authorization: `OAuth ${token}` } })
+            .pipe(catchError((error: AxiosError) =>
+            {
+                throw error;
+            }),));
 
         if (!userInfo)
         {

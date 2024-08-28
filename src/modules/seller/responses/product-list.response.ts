@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ListResponse } from "../../../core/abstract/list.response";
 import { ProductResponse } from "./product.response";
-import { ProductEntity } from "../entites/product.entity";
+import { ProductEntity } from "../../product/entites/product.entity";
 
 export class ProductListResponse extends ListResponse
 {

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { moderation_status as ModerationStatus, product_status as ProductStatus } from "@prisma/client";
-import { ProductEntity } from "../entites/product.entity";
+import { ProductEntity } from "../../product/entites/product.entity";
 import { TagEntity } from "../../tag/entites/tag.entity";
 
 export class CreateProductResponse

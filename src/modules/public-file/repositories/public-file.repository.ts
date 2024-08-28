@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
 import { PrismaService } from "../../../shared/prisma-client";
 import { CreateFileDto } from "../requests/create-file.dto";
 import { PublicFileEntity } from "../entities/public-file.entity";

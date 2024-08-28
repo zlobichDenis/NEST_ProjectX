@@ -1,13 +1,11 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { v4 as uuid } from "uuid";
-import { product_status as ProductStatus } from "@prisma/client";
+import { ApiHideProperty, ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { product_status as ProductStatus, region_key as RegionKey } from "@prisma/client";
 import { CreateProductBody } from "../validation/create-product.schema";
 import { VideoEntity } from "../../video/entities/video.entity";
 import { ImageEntity } from "../../image/entities/image.entity";
 
 export class CreateSellerProductDto
 {
-    public id: string;
     public sellerUserId: string;
 
     @ApiProperty()
@@ -30,14 +28,18 @@ export class CreateSellerProductDto
     @ApiPropertyOptional()
     public description?: string;
 
+    // TODO: fow now only one region is supported
+    @ApiHideProperty()
+    public regionKey: RegionKey;
+
     public constructor({ name, description, status, tags, price }: CreateProductBody)
     {
-        this.id = uuid();
         this.name = name;
         this.description = description;
         this.status = status;
         this.tags = tags;
         this.price = price;
+        this.regionKey = RegionKey.RU;
     }
 
     public setVideoEntity(video: VideoEntity): CreateSellerProductDto

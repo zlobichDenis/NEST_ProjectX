@@ -2,7 +2,7 @@ import { moderation_status as ModerationStatus, product_status as ProductStatus 
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { PublicFileResponse } from "../../public-file/responses/public-file.response";
 import { TagResponse } from "../../tag/responses/tag.response";
-import { ProductEntity } from "../entites/product.entity";
+import { ProductEntity } from "../../product/entites/product.entity";
 
 export class ProductResponse
 {

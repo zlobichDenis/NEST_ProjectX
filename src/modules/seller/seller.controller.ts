@@ -7,7 +7,8 @@ import {
     Param,
     Post,
     Req,
-    Res, UploadedFile,
+    Res,
+    UploadedFile,
     UseGuards,
     UseInterceptors,
 } from "@nestjs/common";
@@ -48,7 +49,7 @@ export class SellerController
         @Req() request: RequestWithUser,
             @Body(new ZodValidationPipe(createSellerSchema)) dto: CreateSellerBody,
 
-            //TODO: add file validation by type and size 
+            //TODO: add file validation by type and size
             @UploadedFile() logo: Express.Multer.File,
     ): Promise<CreateSellerResponse>
     {

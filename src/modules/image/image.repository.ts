@@ -1,6 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import { Prisma } from "@prisma/client";
-import { v4 as uuid } from "uuid";
 import { PrismaService } from "../../shared/prisma-client";
 import { ImageEntity } from "./entities/image.entity";
 import { CreateImageDto } from "./requests/create-image.dto";
