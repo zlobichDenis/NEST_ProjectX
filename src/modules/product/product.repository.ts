@@ -7,11 +7,27 @@ import { TagEntity } from "../tag/entites/tag.entity";
 import { PublicFileEntity } from "../public-file/entities/public-file.entity";
 import { PrismaTransaction } from "../../shared/prisma-client/types";
 import { CreateProductDto } from "./requests/create-product.dto";
+import { CreateRegionProductDto } from "./requests/create-region-product.dto";
+import { CreateProductTagDto } from "./requests/create-product-tag.dto";
+import { CreateProductPhotoDto } from "./requests/create-product-photo.dto";
+import { CreateProductVideoDto } from "./requests/create-product-video.dto";
+import { ProductTagRepository } from "./repositories/product-tag.repository";
+import { RegionProductRepository } from "./repositories/region-product.repository";
+import { RegionRepository } from "../region/region.repository";
+import { ProductPhotoRepository } from "./repositories/product-photo.repository";
+import { ProductVideoRepository } from "./repositories/product-video.repository";
 
 @Injectable()
 export class ProductRepository
 {
-    public constructor(private readonly prismaService: PrismaService) {}
+    public constructor(
+      private readonly prismaService: PrismaService,
+      private readonly productTagRepository: ProductTagRepository,
+      private readonly regionProductRepository: RegionProductRepository,
+      private readonly regionRepository: RegionRepository,
+      private readonly productPhotoRepository: ProductPhotoRepository,
+      private readonly productVideoRepository: ProductVideoRepository,
+    ) {}
 
     public async createProduct(
         {
@@ -20,6 +36,10 @@ export class ProductRepository
             status,
             description,
             price,
+            photos,
+            tags,
+            regionKey,
+            video,
         }: CreateProductDto,
         transaction: PrismaTransaction = this.prismaService
     ): Promise<ProductEntity>
@@ -34,6 +54,22 @@ export class ProductRepository
                 moderation_status: ModerationStatus.IN_PROGRESS,
             },
         });
+
+        const region = await this.regionRepository.getRegionByKey(regionKey, transaction);
+        const createRegionProductDto = new CreateRegionProductDto(product.id, region.id);
+        await this.regionProductRepository.createRegionProduct(createRegionProductDto, transaction);
+
+        const createProductTagsDtos = tags.map((tag) => new CreateProductTagDto(product.id, tag));
+        await this.productTagRepository.createProductTags(createProductTagsDtos, transaction);
+
+        const createProductPhotoDtos = photos.map((photo) => new CreateProductPhotoDto(photo.id, product.id));
+        await this.productPhotoRepository.createProductPhotos(createProductPhotoDtos, transaction);
+
+        const createProductVideoDto = new CreateProductVideoDto(video.id, product.id);
+        await this.productVideoRepository.createProductVideo(
+          createProductVideoDto,
+          transaction
+        );
 
         return new ProductEntity(product);
     }

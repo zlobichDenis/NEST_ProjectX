@@ -13,7 +13,6 @@ import { ProductModule } from "../product/product.module";
 import { SellerProductController } from "./controllers/seller-product.controller";
 import { SellerProductService } from "./services/seller-product.service";
 import { SellerProductRepository } from "./repositories/seller-product.repository";
-import { RegionModule } from "../region/region.module";
 
 @Module({
     imports: [
@@ -23,7 +22,6 @@ import { RegionModule } from "../region/region.module";
         VideoModule,
         ProductModule,
         VideoModule,
-        RegionModule,
     ],
     controllers: [
         SellerController,

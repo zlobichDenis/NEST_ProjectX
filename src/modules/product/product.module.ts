@@ -6,11 +6,13 @@ import { ProductTagRepository } from "./repositories/product-tag.repository";
 import { ProductPhotoRepository } from "./repositories/product-photo.repository";
 import { ImageModule } from "../image/image.module";
 import { RegionProductRepository } from "./repositories/region-product.repository";
+import { RegionModule } from "../region/region.module";
 
 @Module({
     imports: [
         VideoModule,
         ImageModule,
+        RegionModule,
     ],
     controllers: [],
     providers: [
@@ -21,11 +23,7 @@ import { RegionProductRepository } from "./repositories/region-product.repositor
         RegionProductRepository,
     ],
     exports: [
-        ProductVideoRepository,
-        ProductTagRepository,
-        ProductPhotoRepository,
         ProductRepository,
-        RegionProductRepository,
     ],
 })
 export class ProductModule {}
