@@ -40,46 +40,54 @@ export class ProductRepository
 
     public async getProducts(query: GetProductListQuery): Promise<ProductEntity[]>
     {
-        const products = await this.prismaService.product.findMany({
-            include: {
-                product_photos: { include: { photo: { include: { file: true } } } },
-                product_videos: { include: { video: { include: { file: true } } } },
-                tags: { include: { tag: true } },
-            },
-            where: {
-                seller_products: { some: { seller_id: query.sellerId } },
-                ...query.search ? { name: { contains: query.search } } : undefined,
-                ...query.status ? { status: query.status } : undefined,
-                ...query.createdAt ? { createdAt: { gte: query.createdAt } } : undefined,
-            },
-            orderBy: { created_at: "desc" },
-            skip: query.offset,
-            take: query.limit,
-        });
+        return this.prismaService.$transaction(async (transaction) => {
+            const dbQuery = {
+                include: {
+                    product_photos: { include: { photo: { include: { file: true } } } },
+                    product_videos: { include: { video: { include: { file: true } } } },
+                    tags: { include: { tag: true } },
+                },
+                where: {
+                    seller_products: { some: { seller_id: query.sellerId } },
+                    ...query.search ? { name: { contains: query.search } } : undefined,
+                    ...query.status ? { status: query.status } : undefined,
+                    ...query.createdAt ? { createdAt: { gte: query.createdAt } } : undefined,
+                },
+                orderBy: { created_at: "desc" as const },
+                skip: query.offset,
+                take: query.limit,
+            };
 
-        return products.map((product) =>
-        {
-            const tags = product.tags.map((tag) =>
-            {
-                return new TagEntity(tag.tag);
+            const products = await transaction.product.findMany(dbQuery);
+            const total = await transaction.product.count({
+                where: dbQuery.where,
             });
 
-            const images = product.product_photos.map((photo) =>
+            return products.map((product) =>
             {
-                return new PublicFileEntity(photo.photo.file);
-            });
+                const tags = product.tags.map((tag) =>
+                {
+                    return new TagEntity(tag.tag);
+                });
 
-            const videos = product.product_videos.map((video) =>
-            {
-                return new PublicFileEntity(video.video.file);
-            });
+                const images = product.product_photos.map((photo) =>
+                {
+                    return new PublicFileEntity(photo.photo.file);
+                });
 
-            return (
-                new ProductEntity(product)
+                const videos = product.product_videos.map((video) =>
+                {
+                    return new PublicFileEntity(video.video.file);
+                });
+
+                return (
+                  new ProductEntity(product)
                     .setTags(tags)
                     .setImages(images)
                     .setVideos(videos)
-            );
+                    .setTotal(total)
+                );
+            });
         });
     }
 
