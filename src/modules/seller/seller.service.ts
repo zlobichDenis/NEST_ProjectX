@@ -6,6 +6,7 @@ import { SellerResponse } from "./responses/seller.response";
 import { SellerEntity } from "./entities/seller.entity";
 import { LoggerService } from "../../shared/logger";
 import { LogoFileService } from "./services/logo-file.service";
+import { EventDispatcher } from "./events/event.dispatcher";
 
 @Injectable()
 export class SellerService
@@ -14,6 +15,7 @@ export class SellerService
         private readonly sellerRepository: SellerRepository,
         private readonly loggerService: LoggerService,
         private readonly logoFileService: LogoFileService,
+        private readonly eventDispatcher: EventDispatcher,
     ) {}
 
     public async createSeller(dto: CreateSellerDto): Promise<CreateSellerResponse>
@@ -75,6 +77,10 @@ export class SellerService
 
     public async deleteSellerByUserId(userId: string): Promise<SellerEntity>
     {
-        return this.sellerRepository.deleteSellerByUserId(userId);
+        const deletedSeller = await this.sellerRepository.deleteSellerByUserId(userId);
+
+        this.eventDispatcher.sendDeleteSellerProfileEvent(deletedSeller);
+
+        return deletedSeller;
     }
 }

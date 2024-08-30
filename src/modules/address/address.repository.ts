@@ -44,4 +44,12 @@ export class AddressRepository
 
         return addresses.map((address) => new AddressEntity(address));
     }
+
+    public async deleteAddressBatchByIds(
+        ids: string[],
+        transaction: PrismaTransaction = this.prismaService,
+    ): Promise<void>
+    {
+        await transaction.address.deleteMany({ where: { id: { in: ids } } });
+    }
 }

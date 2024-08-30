@@ -14,4 +14,9 @@ export class AddressService
 
         return createdAddress ? new CreateAddressResponse(createdAddress) : null;
     }
+
+    public async deleteAddressBatchByIds(ids: string[]): Promise<void>
+    {
+        return this.addressRepository.deleteAddressBatchByIds(ids);
+    }
 }

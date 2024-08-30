@@ -1,7 +1,7 @@
 import { seller as SellerBaseEntity, user as UserBaseEntity } from "@prisma/client";
 import { UserEntity } from "../../user/entities";
 import { AddressEntity } from "../../address/entities/address.entity";
-import { PublicFileEntity } from "../../public-file/entities/public-file.entity";
+import { ImageEntity } from "../../image/entities/image.entity";
 
 export class SellerEntity
 {
@@ -15,7 +15,7 @@ export class SellerEntity
     public logoImageId: string;
     public contactEmail: string;
 
-    public logo?: PublicFileEntity;
+    public logo?: ImageEntity;
     public updatedAt?: Date;
     public user?: UserEntity;
     public addresses?: AddressEntity[];
@@ -59,7 +59,7 @@ export class SellerEntity
         return this;
     }
 
-    public setLogo(logo: PublicFileEntity): SellerEntity
+    public setLogo(logo: ImageEntity): SellerEntity
     {
         this.logo = logo;
 

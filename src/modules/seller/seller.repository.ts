@@ -10,6 +10,9 @@ import { CreateFileDto } from "../public-file/requests/create-file.dto";
 import { CreateImageDto } from "../image/requests/create-image.dto";
 import { ImageRepository } from "../image/image.repository";
 import { CreateAddressDto } from "../address/requests/create-address.dto";
+import { AddressEntity } from "../address/entities/address.entity";
+import { ImageEntity } from "../image/entities/image.entity";
+import { PublicFileEntity } from "../public-file/entities/public-file.entity";
 
 @Injectable()
 export class SellerRepository
@@ -83,24 +86,25 @@ export class SellerRepository
     {
         const sellerEntity = await this.prismaService.seller.findUnique({
             where: { user_id: userId },
-            include: { user: true, logo: true, seller_address: true },
+            include: {
+                user: true,
+                logo: { include: { file: true } },
+                seller_address: true,
+            },
         });
 
         if (!sellerEntity) return null;
 
         const addressIds = sellerEntity?.seller_address.map(({ address_id }) => address_id);
-
         const addresses = addressIds ? await this.addressRepository.getAddressBatchByIds(addressIds) : null;
-
-        const logoFile = sellerEntity.logo?.file_id
-            ? await this.publicFileRepository.getFileById(sellerEntity.logo.file_id)
-            : undefined;
+        const logoFileEntity = new PublicFileEntity(sellerEntity.logo.file);
+        const logoImageEntity = new ImageEntity(sellerEntity.logo).setFile(logoFileEntity);
 
         return sellerEntity
             ? new SellerEntity(sellerEntity)
                 .setUser(sellerEntity.user)
                 .setAddresses(addresses)
-                .setLogo(logoFile)
+                .setLogo(logoImageEntity)
             : null;
     }
 
@@ -126,8 +130,18 @@ export class SellerRepository
 
     public async deleteSellerByUserId(userId: string): Promise<SellerEntity>
     {
-        const deletedSeller = await this.prismaService.seller.delete({ where: { user_id: userId } });
+        const deletedSeller = await this.prismaService.seller.delete({
+            where: { user_id: userId },
+            include: {
+                seller_address: { include: { address: true } },
+                logo: { include: { file: true } },
+            },
+        });
+        const addressEntities = deletedSeller.seller_address.map(({ address }) => new AddressEntity(address));
+        const logoImageFileEntity = new PublicFileEntity(deletedSeller.logo.file);
+        const logoImageEntity = new ImageEntity(deletedSeller.logo)
+            .setFile(logoImageFileEntity);
 
-        return new SellerEntity(deletedSeller);
+        return new SellerEntity(deletedSeller).setAddresses(addressEntities).setLogo(logoImageEntity);
     }
 }

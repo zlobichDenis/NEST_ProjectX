@@ -67,7 +67,7 @@ export class SellerProductService
     {
         const deletedProduct = await this.productRepository.deleteProductById(productId);
 
-        this.eventDispatcher.deleteProduct(deletedProduct);
+        this.eventDispatcher.sendDeleteSellerProductEvent(deletedProduct);
 
         return new ProductResponse(deletedProduct);
     }
