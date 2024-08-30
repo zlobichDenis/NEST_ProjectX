@@ -1,12 +1,10 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
-    FileTypeValidator,
     Get,
     HttpStatus,
-    MaxFileSizeValidator,
-    ParseFilePipe,
     Post,
     Req,
     UploadedFile,
@@ -27,6 +25,7 @@ import { ProfileNotExistsGuard } from "./guards/profile-not-exist.guard";
 import { CreateProfileBody, createProfileSchema } from "./validation/create-profile.schema";
 import { Roles } from "../auth/decorators/role.decorator";
 import { RolesGuard } from "../auth/guards/role.guard";
+import { FileValidator } from "../../core/validators/file.validator";
 
 @ApiBearerAuth()
 @ApiTags("profile")
@@ -54,16 +53,18 @@ export class ProfileController
         @Req() request: RequestWithUser,
             @Body(new ZodValidationPipe(createProfileSchema))
             createProfile: CreateProfileBody,
-            @UploadedFile(new ParseFilePipe({
-                validators: [
-                    new MaxFileSizeValidator({ maxSize: 2e+7 }),
-                    new FileTypeValidator({ fileType: "image/jpeg" }),
-                    new FileTypeValidator({ fileType: "image/png" }),
-                ],
-            }))
+            @UploadedFile()
             avatar?: Express.Multer.File,
     ): Promise<ProfileResponse>
     {
+        if (avatar)
+        {
+            if (!FileValidator.validateImages([avatar]))
+            {
+                throw new BadRequestException();
+            }
+        }
+
         const createProfileDto = new CreateProfileDto(
             request.user.id,
             createProfile.name,
@@ -73,7 +74,7 @@ export class ProfileController
     }
 
     @UseGuards(ProfileExistsGuard, OwnProfileGuard)
-    @Delete("/own")
+    @Delete("/my")
     public async deleteOwnProfile(@Req() request: RequestWithProfile): Promise<HttpStatus.NO_CONTENT>
     {
         await this.profileService.deleteUserProfileById(request.profile.id);

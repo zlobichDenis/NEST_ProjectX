@@ -15,6 +15,7 @@ import {
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { user_role as UserRole } from "@prisma/client";
 import { JwtAuthGuard } from "../../auth/guards";
 import { CreateProductResponse } from "../responses/create-product.response";
 import { CreateSellerProductDto } from "../requests/create-seller-product.dto";
@@ -26,8 +27,8 @@ import { SellerExistsGuard } from "../guards/seller-exists.guard";
 import { SellerProductService } from "../services/seller-product.service";
 import { OwnProductGuard } from "../guards/own-product.guard";
 import { Roles } from "../../auth/decorators/role.decorator";
-import { user_role as UserRole } from "@prisma/client";
 import { RolesGuard } from "../../auth/guards/role.guard";
+import { FileValidator } from "../../../core/validators/file.validator";
 
 @ApiTags("seller/product")
 @ApiBearerAuth()
@@ -56,7 +57,13 @@ export class SellerProductController
     {
         const createProductDto = new CreateSellerProductDto(dto).setSellerUserId(request.user.id);
 
-        if (!files || !files.video[0] || !files.photos.length)
+        if (
+            !files
+          || !files.video[0]
+          || !files.photos.length
+          || !FileValidator.validateImages(files.photos)
+          || !FileValidator.validateVideos(files.video)
+        )
         {
             throw new BadRequestException();
         }

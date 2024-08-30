@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -23,6 +24,7 @@ import {
 } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Response } from "express";
+import { user_role as UserRole } from "@prisma/client";
 import { SellerService } from "./seller.service";
 import { CreateSellerBody, createSellerSchema } from "./validation/create-seller.validation";
 import { JwtAuthGuard } from "../auth/guards";
@@ -33,8 +35,8 @@ import { SellerResponse } from "./responses/seller.response";
 import { SellerExistsGuard } from "./guards/seller-exists.guard";
 import { OwnSellerGuard } from "./guards/own-seller.guard";
 import { Roles } from "../auth/decorators/role.decorator";
-import { user_role as UserRole } from "@prisma/client";
 import { RolesGuard } from "../auth/guards/role.guard";
+import { FileValidator } from "../../core/validators/file.validator";
 
 @ApiTags("seller")
 @ApiBearerAuth()
@@ -52,11 +54,17 @@ export class SellerController
     public async createOwnSeller(
         @Req() request: RequestWithUser,
             @Body(new ZodValidationPipe(createSellerSchema)) dto: CreateSellerBody,
-
-            //TODO: add file validation by type and size
-            @UploadedFile() logo: Express.Multer.File,
+            @UploadedFile() logo?: Express.Multer.File,
     ): Promise<CreateSellerResponse>
     {
+        if (logo)
+        {
+            if (!FileValidator.validateImages([logo]))
+            {
+                throw new BadRequestException();
+            }
+        }
+
         const createSellerDto = new CreateSellerDto(dto)
             .setUserId(request.user.id)
             .setLogo(logo);
