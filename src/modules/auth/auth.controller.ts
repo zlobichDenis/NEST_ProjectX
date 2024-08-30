@@ -51,18 +51,17 @@ export class AuthController
     @ApiBearerAuth()
     @UseGuards(JwtRefreshGuard)
     @Get("refresh")
-    public async refresh(@Req() request: RequestWithUser, @Res() response: Response): Promise<Response>
+    public async refresh(@Req() request: RequestWithUser): Promise<TokensResponse>
     {
-        // TODO: rewrite to return json
-        const accessToken = this.authService.generateJwtAccessToken(request.user.id);
+        return this.authService.generateJwtTokens(request.user.id);
 
-        response.cookie(
-            "Authentication",
-            accessToken,
-            { httpOnly: false, maxAge: this.configService.get("jwtExpires") }
-        );
-
-        return response.sendStatus(HttpStatus.OK);
+        // response.cookie(
+        //     "Authentication",
+        //     accessToken,
+        //     { httpOnly: false, maxAge: this.configService.get("jwtExpires") }
+        // );
+        //
+        // return response.sendStatus(HttpStatus.OK);
     }
 
     @ApiBearerAuth()
