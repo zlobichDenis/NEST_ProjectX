@@ -2,27 +2,57 @@ import { Injectable } from "@nestjs/common";
 import { ProfileRepository } from "./profile.repository";
 import { ProfileResponse } from "./reponses/profile.response";
 import { CreateProfileDto } from "./requests/create-profile.dto";
-import { GetProfileOptions } from "./requests/get-profile-options.dto";
+import { ImageEntity } from "../image/entities/image.entity";
+import { UploadImageDto } from "../image/requests/upload-image.dto";
+import { ImageService } from "../image/image.service";
+import { EventDispatcher } from "./events/event.dispatcher";
+import { ProfileEntity } from "./entities/profile.entity";
 
 @Injectable()
 export class ProfileService
 {
-    public constructor(private readonly profileRepository: ProfileRepository) {}
+    public constructor(
+        private readonly profileRepository: ProfileRepository,
+        private readonly imageService: ImageService,
+        private readonly eventDispatcher: EventDispatcher,
+    ) {}
 
-    public async getProfileByUserId(
-        userId: string,
-        options = new GetProfileOptions({ user: true }),
-    ): Promise<ProfileResponse | null>
+    public async getProfileByUserId(userId: string): Promise<ProfileResponse | null>
     {
-        const profile = await this.profileRepository.getProfileByUserId(userId, options);
+        const profile = await this.profileRepository.getProfileByUserId(userId);
 
         return profile ? new ProfileResponse(profile) : null;
     }
 
-    public async createUserProfile(createProfileDto: CreateProfileDto)
+    public async createUserProfile(
+        createProfileDto: CreateProfileDto,
+        avatar?: Express.Multer.File,
+    ): Promise<ProfileResponse>
     {
+        const profileAvatar = avatar ? await this.uploadAvatar(createProfileDto.id, avatar) : undefined;
+
+        if (profileAvatar) createProfileDto.setAvatarImageId(profileAvatar.id);
+
         const profile = await this.profileRepository.createProfile(createProfileDto);
 
         return new ProfileResponse(profile);
+    }
+
+    public async deleteUserProfileById(profileId: string): Promise<ProfileEntity>
+    {
+        const deletedProfile = await this.profileRepository.deleteProfileById(profileId);
+
+        this.eventDispatcher.sendDeleteUserProfileEvent(deletedProfile);
+
+        return deletedProfile;
+    }
+
+    private async uploadAvatar(profileId: string, avatar: Express.Multer.File): Promise<ImageEntity>
+    {
+        const uploadImageDto = new UploadImageDto(avatar);
+
+        const [profileAvatar] = await this.imageService.createImages([uploadImageDto], profileId);
+
+        return profileAvatar;
     }
 }

@@ -1,8 +1,22 @@
-import { PrismaClient } from  "@prisma/client";
+import { PrismaClient, provider, user_role } from "@prisma/client";
 import { currency as Currency, region_key as RegionKey } from "@prisma/client";
 import { v4 as uuid } from "uuid";
 
 const prisma = new PrismaClient();
+
+async function seedUsers()
+{
+    const users = [
+        {
+            id: uuid(),
+            email: "sgsdgk9232@gmail.com",
+            provider: provider.GOOGLE,
+            role: user_role.SELLER,
+        },
+    ];
+
+    await prisma.user.createMany({ data: users });
+}
 
 async function seedTags()
 {
@@ -27,8 +41,8 @@ async function seedRegions()
             id: uuid(),
             currency: Currency.RUB,
             key: RegionKey.RU,
-            display_name: 'Russia',
-        }
+            display_name: "Russia",
+        },
     ];
 
     await prisma.region.createMany({ data: regions });
@@ -36,6 +50,7 @@ async function seedRegions()
 
 async function main()
 {
+    await seedUsers();
     await seedTags();
     await seedRegions();
 }

@@ -16,10 +16,7 @@ export class ProfileExistsGuard implements CanActivate
     {
         const requestWithUser = context.switchToHttp().getRequest();
 
-        const profile = await this.profileRepository.getProfileByUserId(
-            requestWithUser.user.id,
-            { include: { user: true } }
-        );
+        const profile = await this.profileRepository.getProfileByUserId(requestWithUser.user.id);
 
         if (!profile)
         {

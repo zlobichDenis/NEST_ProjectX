@@ -25,10 +25,14 @@ import { GetProductListQuery, getProductListQuerySchema } from "../validation/ge
 import { SellerExistsGuard } from "../guards/seller-exists.guard";
 import { SellerProductService } from "../services/seller-product.service";
 import { OwnProductGuard } from "../guards/own-product.guard";
+import { Roles } from "../../auth/decorators/role.decorator";
+import { user_role as UserRole } from "@prisma/client";
+import { RolesGuard } from "../../auth/guards/role.guard";
 
 @ApiTags("seller/product")
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, SellerExistsGuard)
+@Roles(UserRole.SELLER)
+@UseGuards(JwtAuthGuard, SellerExistsGuard, RolesGuard)
 @Controller("seller/product")
 export class SellerProductController
 {

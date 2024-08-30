@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ProfileEntity } from "../entities/profile.entity";
 import { UserResponse } from "../../user/responses";
+import { ImageResponse } from "../../image/responses/image.response";
 
 export class ProfileResponse
 {
@@ -17,7 +18,7 @@ export class ProfileResponse
     public createdAt: Date;
 
     @ApiProperty()
-    public photo?: string;
+    public photo?: ImageResponse;
 
     @ApiProperty({ type: Date })
     public updatedAt?: Date;
@@ -29,7 +30,7 @@ export class ProfileResponse
     {
         this.id = id;
         this.displayName = displayName;
-        this.photo = photo;
+        this.photo = new ImageResponse(photo);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.user = user;

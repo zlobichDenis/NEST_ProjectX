@@ -30,6 +30,7 @@ export class UserService
             id: userId,
             provider: dto.provider,
             email: dto.email,
+            role: dto.role,
         });
 
         return new UserResponse(createdUser);

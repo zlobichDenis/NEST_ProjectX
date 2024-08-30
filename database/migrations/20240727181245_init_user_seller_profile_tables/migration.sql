@@ -13,9 +13,6 @@ CREATE TABLE "user" (
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")
 );
 
-INSERT INTO "user" (id, email, provider, current_refresh_token, updated_at)
-    VALUES ('f598b2d3-e9c8-4ca8-8a5c-fb233aae61bf', 'sgsdgk9232@gmail.com', 'GOOGLE', null, null);
-
 -- CreateTable
 CREATE TABLE "profile" (
     "id" UUID NOT NULL,

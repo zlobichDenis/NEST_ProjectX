@@ -1,15 +1,18 @@
-import { profile as ProfileBaseEntity, user as UserBaseEntity } from "@prisma/client";
+import { profile as ProfileBaseEntity } from "@prisma/client";
 import { UserEntity } from "../../user/entities";
+import { AddressEntity } from "../../address/entities/address.entity";
+import { ImageEntity } from "../../image/entities/image.entity";
 
 export class ProfileEntity
 {
     public id: string;
     public displayName: string;
     public createdAt: Date;
-    public photo?: string;
+    public photo?: ImageEntity;
     public updatedAt?: Date;
 
     public user?: UserEntity;
+    public addresses?: AddressEntity[];
 
     public constructor({ id, display_name, created_at, updated_at }: ProfileBaseEntity)
     {
@@ -19,9 +22,23 @@ export class ProfileEntity
         this.updatedAt = updated_at ? new Date(updated_at) : undefined;
     }
 
-    public setUser(user?: UserBaseEntity): ProfileEntity
+    public setUser(user: UserEntity): ProfileEntity
     {
-        this.user = user ? new UserEntity(user) : undefined;
+        this.user = user;
+
+        return this;
+    }
+
+    public setAddresses(addresses: AddressEntity[]): ProfileEntity
+    {
+        this.addresses = addresses;
+
+        return this;
+    }
+
+    public setPhoto(image: ImageEntity): ProfileEntity
+    {
+        this.photo = image;
 
         return this;
     }

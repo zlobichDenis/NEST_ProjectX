@@ -5,6 +5,7 @@ export class CreateProfileDto
 {
     public id: string;
     public userId: string;
+    public avatarImageId: string;
 
     @ApiProperty()
     public name: string;
@@ -17,5 +18,12 @@ export class CreateProfileDto
         this.id = uuidv4();
         this.userId = userId;
         this.name = givenName;
+    }
+
+    public setAvatarImageId(imageId: string): CreateProfileDto
+    {
+        this.avatarImageId = imageId;
+
+        return this;
     }
 }

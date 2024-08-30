@@ -4,6 +4,8 @@ import { OnEvent } from "@nestjs/event-emitter";
 import { SellerEvent } from "../../seller/events/events";
 import { ImageService } from "../image.service";
 import { DeleteSellerPayload } from "../../seller/events/payloads/delete-seller.payload";
+import { ProfileEvent } from "../../profile/events/events";
+import { DeleteUserProfilePayload } from "../../profile/events/payloads/delete-user-profile.payload";
 
 @Injectable()
 export class EventListener
@@ -20,5 +22,11 @@ export class EventListener
     public async handleDeleteSellerProfile(payload: DeleteSellerPayload): Promise<void>
     {
         this.imageService.deleteImages([payload.logo]);
+    }
+
+    @OnEvent(ProfileEvent.DELETE_PROFILE)
+    public async handleDeleteProfile(payload: DeleteUserProfilePayload): Promise<void>
+    {
+        this.imageService.deleteImages([payload.photo]);
     }
 }

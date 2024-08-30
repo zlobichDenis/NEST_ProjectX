@@ -32,10 +32,14 @@ import { RequestWithUser, ZodValidationPipe } from "../../core";
 import { SellerResponse } from "./responses/seller.response";
 import { SellerExistsGuard } from "./guards/seller-exists.guard";
 import { OwnSellerGuard } from "./guards/own-seller.guard";
+import { Roles } from "../auth/decorators/role.decorator";
+import { user_role as UserRole } from "@prisma/client";
+import { RolesGuard } from "../auth/guards/role.guard";
 
 @ApiTags("seller")
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+@Roles(UserRole.SELLER)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller("seller")
 export class SellerController
 {

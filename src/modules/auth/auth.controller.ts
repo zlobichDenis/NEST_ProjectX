@@ -4,7 +4,7 @@ import { provider as AuthProvider } from "@prisma/client";
 import { Response } from "express";
 import { ApiBearerAuth, ApiBody, ApiExcludeEndpoint, ApiParam, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { RequestWithUser, ZodValidationPipe } from "src/core";
-import { GoogleOauth2Guard, JwtAuthGuard, JwtRefreshGuard } from "./guards";
+import { JwtAuthGuard, JwtRefreshGuard } from "./guards";
 import { AuthService } from "./auth.service";
 import { RegisterBody, registerSchema } from "./validation";
 import { TokensResponse } from "./responses/tokens.response";
@@ -39,14 +39,14 @@ export class AuthController
         return this.authService.getLoginLink(provider);
     }
 
-    @ApiExcludeEndpoint()
-    @ApiResponse({ type: TokensResponse, description: "Token has been set to cookie" })
-    @UseGuards(GoogleOauth2Guard)
-    @Get("google/redirect")
-    public async loginRedirect(@Req() request: RequestWithUser): Promise<TokensResponse>
-    {
-        return this.authService.createUser(AuthProvider.GOOGLE, request.user.email);
-    }
+    // @ApiExcludeEndpoint()
+    // @ApiResponse({ type: TokensResponse, description: "Token has been set to cookie" })
+    // @UseGuards(GoogleOauth2Guard)
+    // @Get("google/redirect")
+    // public async loginRedirect(@Req() request: RequestWithUser): Promise<TokensResponse>
+    // {
+    //     return this.authService.createUser(AuthProvider.GOOGLE, request.user.email);
+    // }
 
     @ApiBearerAuth()
     @UseGuards(JwtRefreshGuard)

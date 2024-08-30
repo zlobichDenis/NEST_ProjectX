@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { provider as AuthProvider } from "@prisma/client";
+import { provider as AuthProvider, user_role as UserRole } from "@prisma/client";
 import { RegisterBody } from "../validation";
 
 export class RegisterDto
@@ -10,9 +10,13 @@ export class RegisterDto
     @ApiProperty()
     public tokenId: string;
 
-    public constructor({ provider, tokenId }: RegisterBody)
+    @ApiProperty()
+    public role: UserRole;
+
+    public constructor({ provider, tokenId, role }: RegisterBody)
     {
         this.provider = provider;
         this.tokenId = tokenId;
+        this.role = role;
     }
 }

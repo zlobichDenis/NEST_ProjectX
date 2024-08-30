@@ -1,4 +1,4 @@
-import { user as UserBaseEntity, provider as AuthProvider } from "@prisma/client";
+import { user as UserBaseEntity, provider as AuthProvider, user_role as UserRole } from "@prisma/client";
 
 export class UserEntity
 {
@@ -7,6 +7,7 @@ export class UserEntity
     public createdAt: Date;
     public email: string;
     public refreshToken: string;
+    public role: UserRole;
 
     public constructor(user: UserBaseEntity)
     {
@@ -15,5 +16,6 @@ export class UserEntity
         this.createdAt = user.created_at;
         this.email = user.email;
         this.refreshToken = user.current_refresh_token;
+        this.role = user.role;
     }
 }

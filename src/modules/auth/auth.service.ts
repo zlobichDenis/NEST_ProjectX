@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { provider as AuthProvider } from "@prisma/client";
+import { provider as AuthProvider, user_role as UserRole } from "@prisma/client";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import { UserService } from "src/modules/user";
@@ -87,9 +87,9 @@ export class AuthService
         );
     }
 
-    public async createUser(provider: AuthProvider, email: string): Promise<TokensResponse>
+    public async createUser(provider: AuthProvider, email: string, role: UserRole): Promise<TokensResponse>
     {
-        const createdUser = await this.userService.createIfNotExists(new CreateUserDto(provider, email));
+        const createdUser = await this.userService.createIfNotExists(new CreateUserDto(provider, email, role));
 
         if (!createdUser)
         {
@@ -103,7 +103,7 @@ export class AuthService
     {
         const originalUser = await this.googleAuthService.validateToken(dto.tokenId);
 
-        return this.loginViaEmail(dto.provider, originalUser.getPayload().email);
+        return this.loginViaEmail(dto.provider, originalUser.getPayload().email, dto.role);
     }
 
     private async loginViaYandex(dto: RegisterDto): Promise<TokensResponse>
@@ -115,16 +115,16 @@ export class AuthService
             throw new UnauthorizedException();
         }
 
-        return this.loginViaEmail(dto.provider, userInfo.default_email);
+        return this.loginViaEmail(dto.provider, userInfo.default_email, dto.role);
     }
 
-    private async loginViaEmail(provider: AuthProvider, email: string): Promise<TokensResponse>
+    private async loginViaEmail(provider: AuthProvider, email: string, role: UserRole): Promise<TokensResponse>
     {
         const existingUser = await this.userService.getUserByEmail(email);
 
         if (!existingUser)
         {
-            return this.createUser(provider, email);
+            return this.createUser(provider, email, role);
         }
 
         return this.generateJwtTokens(existingUser.id);
