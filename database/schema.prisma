@@ -152,6 +152,7 @@ model region {
 model product {
   id                String            @id @db.Uuid
   name              String            @db.VarChar(1000)
+  raw_name          String            @unique @db.VarChar()
   description       String?           @db.VarChar()
   price             Float             @db.DoublePrecision
   status            product_status

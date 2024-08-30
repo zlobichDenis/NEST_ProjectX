@@ -53,6 +53,7 @@ export class ProductRepository
                 id,
                 name,
                 description,
+                raw_name: name.toLowerCase(),
                 status,
                 price,
                 moderation_status: ModerationStatus.IN_PROGRESS,
@@ -90,7 +91,7 @@ export class ProductRepository
                 },
                 where: {
                     seller_products: { some: { seller_id: query.sellerId } },
-                    ...query.search ? { name: { contains: query.search } } : undefined,
+                    ...query.search ? { raw_name: { contains: query.search } } : undefined,
                     ...query.status ? { status: query.status } : undefined,
                     ...query.from ? { createdAt: { gte: query.from } } : undefined,
                     ... query.from && query.to ? { createdAt: { lte: query.to } } : undefined,
