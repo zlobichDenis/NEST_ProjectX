@@ -3,8 +3,9 @@ import {
     moderation_status as ModerationStatus,
     product_status as ProductStatus,
 } from "@prisma/client";
-import { PublicFileEntity } from "../../public-file/entities/public-file.entity";
 import { TagEntity } from "../../tag/entites/tag.entity";
+import { VideoEntity } from "../../video/entities/video.entity";
+import { ImageEntity } from "../../image/entities/image.entity";
 
 export class ProductEntity
 {
@@ -19,8 +20,8 @@ export class ProductEntity
     public total?: number;
     public description?: string;
     public updatedAt?: Date;
-    public videos?: PublicFileEntity[];
-    public images?: PublicFileEntity[];
+    public videos?: VideoEntity[];
+    public images?: ImageEntity[];
     public tags?: TagEntity[];
 
     public constructor({
@@ -44,14 +45,14 @@ export class ProductEntity
         this.name = name;
     }
 
-    public setVideos(videos: PublicFileEntity[]): ProductEntity
+    public setVideos(videos: VideoEntity[]): ProductEntity
     {
         this.videos = videos;
 
         return this;
     }
 
-    public setImages(images: PublicFileEntity[]): ProductEntity
+    public setImages(images: ImageEntity[]): ProductEntity
     {
         this.images = images;
 

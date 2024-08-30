@@ -1,8 +1,9 @@
 import { moderation_status as ModerationStatus, product_status as ProductStatus } from "@prisma/client";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { PublicFileResponse } from "../../public-file/responses/public-file.response";
 import { TagResponse } from "../../tag/responses/tag.response";
 import { ProductEntity } from "../../product/entites/product.entity";
+import { VideoResponse } from "../../video/responses/video.response";
+import { ImageResponse } from "../../image/responses/image.response";
 
 export class ProductResponse
 {
@@ -30,13 +31,13 @@ export class ProductResponse
     @ApiPropertyOptional()
     public updatedAt?: Date;
 
-    @ApiPropertyOptional({ type: PublicFileResponse, isArray: true })
-    public videos?: PublicFileResponse[];
+    @ApiPropertyOptional({ type: VideoResponse, isArray: true })
+    public videos?: VideoResponse[];
 
-    @ApiPropertyOptional({ type: PublicFileResponse, isArray: true })
-    public images?: PublicFileResponse[];
+    @ApiPropertyOptional({ type: ImageResponse, isArray: true })
+    public images?: ImageResponse[];
 
-    @ApiPropertyOptional({ type: PublicFileResponse, isArray: true })
+    @ApiPropertyOptional({ type: TagResponse, isArray: true })
     public tags?: TagResponse[];
 
     public constructor({
@@ -62,7 +63,7 @@ export class ProductResponse
         this.updatedAt = updatedAt;
         this.name = name;
         this.tags = tags?.map((tag) => new TagResponse(tag));
-        this.images = images?.map((image) => new PublicFileResponse(image));
-        this.videos = videos?.map((video) => new PublicFileResponse(video));
+        this.images = images?.map((image) => new ImageResponse(image));
+        this.videos = videos?.map((video) => new VideoResponse(video));
     }
 }

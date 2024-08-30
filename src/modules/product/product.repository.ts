@@ -16,18 +16,22 @@ import { RegionProductRepository } from "./repositories/region-product.repositor
 import { RegionRepository } from "../region/region.repository";
 import { ProductPhotoRepository } from "./repositories/product-photo.repository";
 import { ProductVideoRepository } from "./repositories/product-video.repository";
+import { ImageEntity } from "../image/entities/image.entity";
+import { VideoEntity } from "../video/entities/video.entity";
 
 @Injectable()
 export class ProductRepository
 {
     public constructor(
-      private readonly prismaService: PrismaService,
-      private readonly productTagRepository: ProductTagRepository,
-      private readonly regionProductRepository: RegionProductRepository,
-      private readonly regionRepository: RegionRepository,
-      private readonly productPhotoRepository: ProductPhotoRepository,
-      private readonly productVideoRepository: ProductVideoRepository,
-    ) {}
+        private readonly prismaService: PrismaService,
+        private readonly productTagRepository: ProductTagRepository,
+        private readonly regionProductRepository: RegionProductRepository,
+        private readonly regionRepository: RegionRepository,
+        private readonly productPhotoRepository: ProductPhotoRepository,
+        private readonly productVideoRepository: ProductVideoRepository,
+    )
+    {
+    }
 
     public async createProduct(
         {
@@ -41,7 +45,7 @@ export class ProductRepository
             regionKey,
             video,
         }: CreateProductDto,
-        transaction: PrismaTransaction = this.prismaService
+        transaction: PrismaTransaction = this.prismaService,
     ): Promise<ProductEntity>
     {
         const product = await transaction.product.create({
@@ -67,8 +71,8 @@ export class ProductRepository
 
         const createProductVideoDto = new CreateProductVideoDto(video.id, product.id);
         await this.productVideoRepository.createProductVideo(
-          createProductVideoDto,
-          transaction
+            createProductVideoDto,
+            transaction,
         );
 
         return new ProductEntity(product);
@@ -76,7 +80,8 @@ export class ProductRepository
 
     public async getProducts(query: GetProductListQuery): Promise<ProductEntity[]>
     {
-        return this.prismaService.$transaction(async (transaction) => {
+        return this.prismaService.$transaction(async (transaction) =>
+        {
             const dbQuery = {
                 include: {
                     product_photos: { include: { photo: { include: { file: true } } } },
@@ -95,9 +100,7 @@ export class ProductRepository
             };
 
             const products = await transaction.product.findMany(dbQuery);
-            const total = await transaction.product.count({
-                where: dbQuery.where,
-            });
+            const total = await transaction.product.count({ where: dbQuery.where });
 
             return products.map((product) =>
             {
@@ -108,20 +111,24 @@ export class ProductRepository
 
                 const images = product.product_photos.map((photo) =>
                 {
-                    return new PublicFileEntity(photo.photo.file);
+                    const fileEntity = new PublicFileEntity(photo.photo.file);
+
+                    return new ImageEntity(photo.photo).setFile(fileEntity);
                 });
 
                 const videos = product.product_videos.map((video) =>
                 {
-                    return new PublicFileEntity(video.video.file);
+                    const fileEntity = new PublicFileEntity(video.video.file);
+
+                    return new VideoEntity(video.video).setFile(fileEntity);
                 });
 
                 return (
-                  new ProductEntity(product)
-                    .setTags(tags)
-                    .setImages(images)
-                    .setVideos(videos)
-                    .setTotal(total)
+                    new ProductEntity(product)
+                        .setTags(tags)
+                        .setImages(images)
+                        .setVideos(videos)
+                        .setTotal(total)
                 );
             });
         });
@@ -132,8 +139,27 @@ export class ProductRepository
         transaction: PrismaTransaction = this.prismaService,
     ): Promise<ProductEntity>
     {
-        const deletedProduct = await transaction.product.delete({ where: { id: productId } });
+        const deletedProduct = await transaction.product.delete({
+            include: {
+                product_photos: { include: { photo: { include: { file: true } } } },
+                product_videos: { include: { video: { include: { file: true } } } },
+            },
+            where: { id: productId },
+        });
 
-        return new ProductEntity(deletedProduct);
+        const videos = deletedProduct.product_videos.map((productVideo) =>
+        {
+            const fileEntity =  new PublicFileEntity(productVideo.video.file);
+
+            return new VideoEntity(productVideo.video).setFile(fileEntity);
+        });
+        const images = deletedProduct.product_photos.map((productPhoto) =>
+        {
+            const fileEntity =  new PublicFileEntity(productPhoto.photo.file);
+
+            return new ImageEntity(productPhoto.photo).setFile(fileEntity);
+        });
+
+        return new ProductEntity(deletedProduct).setImages(images).setVideos(videos);
     }
 }

@@ -33,14 +33,14 @@ export class SellerProductRepository
         return this.prismaService.$transaction(async (transaction) =>
         {
             const createProductDto = new CreateProductDto(
-              name,
-              description,
-              status,
-              price,
-              tags,
-              photos,
-              regionKey,
-              videoEntity,
+                name,
+                description,
+                status,
+                price,
+                tags,
+                photos,
+                regionKey,
+                videoEntity,
             );
             const product = await this.productRepository.createProduct(createProductDto, transaction);
 

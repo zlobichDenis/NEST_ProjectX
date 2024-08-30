@@ -24,4 +24,19 @@ export class ImageService
 
         return this.imageRepository.createImages(createImageDtos);
     }
+
+    public async deleteImages(images: ImageEntity[]): Promise<void>
+    {
+        const ids = [];
+        const keys = [];
+
+        images.forEach(({ id, file }) =>
+        {
+            ids.push(id);
+            keys.push(file.key);
+        });
+
+        await this.s3BucketService.deletePublicFiles(keys);
+        await this.imageRepository.deleteImagesByIds(ids);
+    }
 }

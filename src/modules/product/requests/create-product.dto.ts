@@ -16,14 +16,14 @@ export class CreateProductDto
     public video: VideoEntity;
 
     public constructor(
-      name: string,
-      description: string,
-      status: ProductStatus,
-      price: number,
-      tags: string[],
-      photos: ImageEntity[],
-      regionKey: RegionKey,
-      video: VideoEntity,
+        name: string,
+        description: string,
+        status: ProductStatus,
+        price: number,
+        tags: string[],
+        photos: ImageEntity[],
+        regionKey: RegionKey,
+        video: VideoEntity,
     )
     {
         this.id = uuid();

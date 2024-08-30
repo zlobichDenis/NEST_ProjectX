@@ -59,4 +59,9 @@ export class ImageRepository
 
         return new ImageEntity(photo).setFile(new PublicFileEntity(photo.file));
     }
+
+    public async deleteImagesByIds(imageIds: string[], transaction: PrismaTransaction = this.prismaService)
+    {
+        await transaction.image.deleteMany({ where: { id: { in: imageIds } } });
+    }
 }

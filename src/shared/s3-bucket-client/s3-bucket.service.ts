@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { v4 as uuid } from "uuid";
 import { S3 } from "aws-sdk";
+import { DeletedObjects } from "aws-sdk/clients/s3";
 
 type S3BucketClientServiceConfig = {
     bucketName: string;
@@ -41,5 +42,20 @@ export class S3BucketService
     ): Promise<S3.ManagedUpload.SendData[]>
     {
         return Promise.all(files.map((file) => this.uploadPublicFile(file.buffer, folderName, file.originalname)));
+    }
+
+    public async deletePublicFiles(keys: string[]): Promise<DeletedObjects | undefined>
+    {
+        const keysArr = keys.map((key) =>
+        {
+            return { Key: key };
+        });
+
+        const result = await this.s3Client.deleteObjects({
+            Bucket: this.configService.get("awsPublicBucketName"),
+            Delete: { Objects: keysArr },
+        }).promise();
+
+        return result.Deleted;
     }
 }

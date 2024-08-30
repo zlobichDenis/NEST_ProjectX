@@ -31,4 +31,19 @@ export class VideoService
 
         return this.videoRepository.createVideo(createVideoDto);
     }
+
+    public async deleteVideos(videos: VideoEntity[]): Promise<void>
+    {
+        const ids = [];
+        const keys = [];
+
+        videos.forEach(({ id, file }) =>
+        {
+            ids.push(id);
+            keys.push(file.key);
+        });
+
+        await this.s3BucketService.deletePublicFiles(keys);
+        await this.videoRepository.deleteVideoByIds(ids);
+    }
 }

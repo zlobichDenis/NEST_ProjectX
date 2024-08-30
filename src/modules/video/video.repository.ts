@@ -38,4 +38,12 @@ export class VideoRepository
 
         return new VideoEntity(video);
     }
+
+    public async deleteVideoByIds(
+        videoIds: string[],
+        transaction: PrismaTransaction = this.prismaService
+    ): Promise<void>
+    {
+        await transaction.video.deleteMany({ where: { id: { in: videoIds } } });
+    }
 }

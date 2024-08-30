@@ -11,6 +11,7 @@ import { ProductListResponse } from "../responses/product-list.response";
 import { ProductResponse } from "../responses/product.response";
 import { SellerProductRepository } from "../repositories/seller-product.repository";
 import { ProductRepository } from "../../product/product.repository";
+import { EventDispatcher } from "../events/event.dispatcher";
 
 @Injectable()
 export class SellerProductService
@@ -21,6 +22,7 @@ export class SellerProductService
         private readonly videoService: VideoService,
         private readonly sellerRepository: SellerRepository,
         private readonly imageService: ImageService,
+        private readonly eventDispatcher: EventDispatcher,
     ) {}
 
     public async createProduct(
@@ -64,6 +66,8 @@ export class SellerProductService
     public async deleteProductById(productId: string): Promise<ProductResponse>
     {
         const deletedProduct = await this.productRepository.deleteProductById(productId);
+
+        this.eventDispatcher.deleteProduct(deletedProduct);
 
         return new ProductResponse(deletedProduct);
     }
