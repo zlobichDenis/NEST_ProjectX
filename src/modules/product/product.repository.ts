@@ -29,9 +29,7 @@ export class ProductRepository
         private readonly regionRepository: RegionRepository,
         private readonly productPhotoRepository: ProductPhotoRepository,
         private readonly productVideoRepository: ProductVideoRepository,
-    )
-    {
-    }
+    ) {}
 
     public async createProduct(
         {
@@ -93,16 +91,16 @@ export class ProductRepository
                     seller_products: { some: { seller_id: query.sellerId } },
                     ...query.search ? { raw_name: { contains: query.search } } : undefined,
                     ...query.status ? { status: query.status } : undefined,
-                    ...query.from ? { createdAt: { gte: query.from } } : undefined,
-                    ... query.from && query.to ? { createdAt: { lte: query.to } } : undefined,
+                    ...query.from ? { created_at: { gte: query.from } } : undefined,
+                    AND: { ...query.from && query.to ? { created_at: { lte: query.to } } : undefined },
                 },
                 orderBy: { created_at: "desc" as const },
-                skip: query.offset,
-                take: query.limit,
+                ...query.cursor ? { cursor: { id: query.cursor } } : {},
+                ...query.limit ? { take: query.limit, skip: query.cursor ? 1 : undefined } : {},
             };
 
             const products = await transaction.product.findMany(dbQuery);
-            const total = await transaction.product.count({ where: dbQuery.where });
+            const total = await transaction.product.count({ where: dbQuery.where, cursor: dbQuery.cursor });
 
             return products.map((product) =>
             {

@@ -1,8 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { product_status as ProductStatus } from "@prisma/client";
 
-export class GetProductsQueryDto
-{
+export class GetProductsQueryDto {
     @ApiProperty()
     public sellerId: string;
 
@@ -13,11 +12,11 @@ export class GetProductsQueryDto
     public status?: ProductStatus;
 
     @ApiPropertyOptional()
-    public createdAt?: Date;
+    public from?: Date;
 
     @ApiPropertyOptional()
-    public limit?: number;
+    public to?: Date;
 
     @ApiPropertyOptional()
-    public offset?: number;
+    public cursor?: string;
 }

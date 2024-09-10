@@ -60,7 +60,7 @@ export class SellerProductService
     {
         const productEntities = await this.productRepository.getProducts(query);
 
-        return new ProductListResponse(productEntities, productEntities[0]?.total || 0, query.limit, query.offset);
+        return new ProductListResponse(productEntities, productEntities[0]?.total || 0);
     }
 
     public async deleteProductById(productId: string): Promise<ProductResponse>

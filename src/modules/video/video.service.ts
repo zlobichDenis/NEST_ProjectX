@@ -4,6 +4,9 @@ import { S3BucketService } from "../../shared/s3-bucket-client/s3-bucket.service
 import { UploadVideoDto } from "./requests/upload-video.dto";
 import { CreateVideoDto } from "./requests/create-video.dto";
 import { VideoEntity } from "./entities/video.entity";
+import { GetVideoListDto } from "./requests/get-video-list.dto";
+import { VideoResponse } from "./responses/video.response";
+import { VideoListResponse } from "./responses/video-list.response";
 
 type VideoServiceConfig = {
     bucketFolderName: "product-videos",
@@ -45,5 +48,12 @@ export class VideoService
 
         await this.s3BucketService.deletePublicFiles(keys);
         await this.videoRepository.deleteVideoByIds(ids);
+    }
+
+    public async getVideoList(query: GetVideoListDto): Promise<VideoListResponse>
+    {
+        const videoEntities = await this.videoRepository.getVideoList(query);
+
+        return new VideoListResponse(videoEntities, videoEntities[0]?.total || 0);
     }
 }

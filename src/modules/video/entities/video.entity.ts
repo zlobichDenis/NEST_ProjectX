@@ -1,5 +1,6 @@
 import { video as VideoBaseEntity } from "@prisma/client";
 import { PublicFileEntity } from "../../public-file/entities/public-file.entity";
+import { ProductEntity } from "../../product/entites/product.entity";
 
 export class VideoEntity
 {
@@ -10,6 +11,8 @@ export class VideoEntity
     public createdAt: Date;
 
     public file?: PublicFileEntity;
+    public product?: ProductEntity;
+    public total?: number;
 
     public constructor({ id, likes_count, created_at, file_id, name }: VideoBaseEntity)
     {
@@ -23,6 +26,20 @@ export class VideoEntity
     public setFile(file: PublicFileEntity): VideoEntity
     {
         this.file = file;
+
+        return this;
+    }
+
+    public setProduct(product: ProductEntity): VideoEntity
+    {
+        this.product = product;
+
+        return this;
+    }
+
+    public setTotal(total: number): VideoEntity
+    {
+        this.total = total;
 
         return this;
     }

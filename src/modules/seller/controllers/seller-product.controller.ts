@@ -60,7 +60,7 @@ export class SellerProductController
         if (
             !files
           || !files.video[0]
-          || !files.photos.length
+          || !files.photos?.length
           || !FileValidator.validateImages(files.photos)
           || !FileValidator.validateVideos(files.video)
         )
