@@ -5,6 +5,7 @@ import { ConfigService } from "@nestjs/config";
 import { Request } from "express";
 import { UserService } from "src/modules/user";
 import { TokenPayload } from "../types";
+import { UserResponse } from "../../user/responses";
 
 @Injectable()
 export class JWTRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-refresh-token")
@@ -25,7 +26,7 @@ export class JWTRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-ref
         });
     }
 
-    public async validate(request: Request, payload: TokenPayload): Promise<boolean>
+    public async validate(request: Request, payload: TokenPayload): Promise<UserResponse>
     {
         const refreshToken = request.get("Authorization").replace("Bearer", "");
         const user = await this.userService.getUserById(payload.userId);
@@ -40,6 +41,13 @@ export class JWTRefreshTokenStrategy extends PassportStrategy(Strategy, "jwt-ref
             email: user.email,
         };
 
-        return Boolean(this.userService.getUserIfRefreshTokenMatches(refreshToken, payload.userId));
+        const isTokenMatches = Boolean(this.userService.getUserIfRefreshTokenMatches(refreshToken, payload.userId));
+
+        if (!isTokenMatches)
+        {
+            return;
+        }
+
+        return user;
     }
 }
