@@ -7,6 +7,8 @@ import { ProductPhotoRepository } from "./repositories/product-photo.repository"
 import { ImageModule } from "../image/image.module";
 import { RegionProductRepository } from "./repositories/region-product.repository";
 import { RegionModule } from "../region/region.module";
+import { ProductController } from "./product.controller";
+import { ProductService } from "./product.service";
 
 @Module({
     imports: [
@@ -14,8 +16,11 @@ import { RegionModule } from "../region/region.module";
         ImageModule,
         RegionModule,
     ],
-    controllers: [],
+    controllers: [
+        ProductController,
+    ],
     providers: [
+        ProductService,
         ProductRepository,
         ProductVideoRepository,
         ProductTagRepository,

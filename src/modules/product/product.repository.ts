@@ -104,6 +104,7 @@ export class ProductRepository
 
             return products.map((product) =>
             {
+                // TODO: refactor to move to separate function
                 const tags = product.tags.map((tag) =>
                 {
                     return new TagEntity(tag.tag);
@@ -161,5 +162,46 @@ export class ProductRepository
         });
 
         return new ProductEntity(deletedProduct).setImages(images).setVideos(videos);
+    }
+
+    public async getProductById(
+        productId: string,
+        transaction: PrismaTransaction = this.prismaService,
+    ): Promise<ProductEntity | null>
+    {
+        const product = await transaction.product.findUnique({
+            where: { id: productId },
+            include: {
+                product_photos: { include: { photo: { include: { file: true } } } },
+                product_videos: { include: { video: { include: { file: true } } } },
+                tags: { include: { tag: true } },
+            },
+        });
+
+        const tags = product.tags.map((tag) =>
+        {
+            return new TagEntity(tag.tag);
+        });
+
+        const images = product.product_photos.map((photo) =>
+        {
+            const fileEntity = new PublicFileEntity(photo.photo.file);
+
+            return new ImageEntity(photo.photo).setFile(fileEntity);
+        });
+
+        const videos = product.product_videos.map((video) =>
+        {
+            const fileEntity = new PublicFileEntity(video.video.file);
+
+            return new VideoEntity(video.video).setFile(fileEntity);
+        });
+
+        return product
+            ? new ProductEntity(product)
+                .setImages(images)
+                .setTags(tags)
+                .setVideos(videos)
+            : null;
     }
 }

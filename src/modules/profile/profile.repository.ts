@@ -64,7 +64,7 @@ export class ProfileRepository
     public async createProfile(
         {
             id,
-            name,
+            displayName,
             userId,
             avatarImageId,
         }: CreateProfileDto,
@@ -74,7 +74,7 @@ export class ProfileRepository
         const profile = await transaction.profile.create({
             data: {
                 id,
-                display_name:  name,
+                display_name:  displayName,
                 user_id: userId,
                 photo_id: avatarImageId,
             },

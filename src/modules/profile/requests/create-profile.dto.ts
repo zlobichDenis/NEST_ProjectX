@@ -8,16 +8,16 @@ export class CreateProfileDto
     public avatarImageId: string;
 
     @ApiProperty()
-    public name: string;
+    public displayName: string;
 
     public constructor(
         userId: string,
-        givenName: string,
+        displayName: string,
     )
     {
         this.id = uuidv4();
         this.userId = userId;
-        this.name = givenName;
+        this.displayName = displayName;
     }
 
     public setAvatarImageId(imageId: string): CreateProfileDto

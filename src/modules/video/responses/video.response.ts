@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { PublicFileResponse } from "../../public-file/responses/public-file.response";
 import { VideoEntity } from "../entities/video.entity";
 import { ProductResponse } from "../../seller/responses/product.response";
@@ -23,8 +23,8 @@ export class VideoResponse
     @ApiProperty()
     public file: PublicFileResponse;
 
-    @ApiProperty()
-    public product: ProductResponse;
+    @ApiPropertyOptional()
+    public product?: ProductResponse;
 
     public constructor({ id, likesCount, name, fileId, file, createdAt, product }: VideoEntity)
     {
