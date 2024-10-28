@@ -127,6 +127,11 @@ export class AuthService
             return this.createUser(provider, email, role);
         }
 
+        if (existingUser.role !== role)
+        {
+            throw new BadRequestException("User has different role");
+        }
+
         return this.generateJwtTokens(existingUser.id);
     }
 
