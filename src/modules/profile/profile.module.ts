@@ -19,6 +19,9 @@ import { ImageModule } from "../image/image.module";
         ProfileRepository,
         ProfileAddressRepository,
     ],
-    exports: [],
+    exports: [
+        ProfileService,
+        ProfileRepository,
+    ],
 })
 export class ProfileModule {}

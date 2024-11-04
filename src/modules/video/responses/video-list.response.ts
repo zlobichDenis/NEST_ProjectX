@@ -1,7 +1,7 @@
-import { ListCursorResponse } from "../../../core/abstract/list.response";
 import { VideoResponse } from "./video.response";
 import { ApiProperty } from "@nestjs/swagger";
 import { VideoEntity } from "../entities/video.entity";
+import { ListCursorResponse } from "../../../core/abstract/list-cursor";
 
 export class VideoListResponse extends ListCursorResponse
 {

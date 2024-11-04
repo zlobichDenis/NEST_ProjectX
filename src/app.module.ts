@@ -11,6 +11,7 @@ import { ImageModule } from "./modules/image/image.module";
 import { VideoModule } from "./modules/video/video.module";
 import { TagModule } from "./modules/tag/tag.module";
 import { RegionModule } from "./modules/region/region.module";
+import { OrderModule } from "./modules/order/order.module";
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { RegionModule } from "./modules/region/region.module";
         VideoModule,
         TagModule,
         RegionModule,
+        OrderModule,
     ],
     controllers: [],
     providers: [],

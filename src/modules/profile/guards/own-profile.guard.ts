@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@
 import { ModuleRef } from "@nestjs/core";
 import { ProfileRepository } from "../profile.repository";
 
+// TODO: remove
 @Injectable()
 export class OwnProfileGuard implements CanActivate
 {
