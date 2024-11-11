@@ -30,7 +30,7 @@ export class ProfileResponse
     {
         this.id = id;
         this.displayName = displayName;
-        this.photo = new ImageResponse(photo);
+        this.photo = photo ? new ImageResponse(photo) : null;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.user = user;

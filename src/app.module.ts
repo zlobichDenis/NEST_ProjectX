@@ -12,6 +12,7 @@ import { VideoModule } from "./modules/video/video.module";
 import { TagModule } from "./modules/tag/tag.module";
 import { RegionModule } from "./modules/region/region.module";
 import { OrderModule } from "./modules/order/order.module";
+import { CartModule } from "./modules/cart/cart.module";
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { OrderModule } from "./modules/order/order.module";
         TagModule,
         RegionModule,
         OrderModule,
+        CartModule,
     ],
     controllers: [],
     providers: [],

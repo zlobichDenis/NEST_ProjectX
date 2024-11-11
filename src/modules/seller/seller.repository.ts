@@ -97,8 +97,8 @@ export class SellerRepository
 
         const addressIds = sellerEntity?.seller_address.map(({ address_id }) => address_id);
         const addresses = addressIds ? await this.addressRepository.getAddressBatchByIds(addressIds) : null;
-        const logoFileEntity = new PublicFileEntity(sellerEntity.logo.file);
-        const logoImageEntity = new ImageEntity(sellerEntity.logo).setFile(logoFileEntity);
+        const logoFileEntity = sellerEntity.logo ? new PublicFileEntity(sellerEntity.logo.file) : null;
+        const logoImageEntity = logoFileEntity ? new ImageEntity(sellerEntity.logo).setFile(logoFileEntity) : null;
 
         return sellerEntity
             ? new SellerEntity(sellerEntity)

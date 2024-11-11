@@ -7,6 +7,7 @@ import { UploadImageDto } from "../image/requests/upload-image.dto";
 import { ImageService } from "../image/image.service";
 import { EventDispatcher } from "./events/event.dispatcher";
 import { ProfileEntity } from "./entities/profile.entity";
+import { CartRepository } from "../cart/cart.repository";
 
 @Injectable()
 export class ProfileService
@@ -27,15 +28,23 @@ export class ProfileService
     public async createUserProfile(
         createProfileDto: CreateProfileDto,
         avatar?: Express.Multer.File,
-    ): Promise<ProfileResponse>
+    ): Promise<ProfileResponse | null>
     {
-        const profileAvatar = avatar ? await this.uploadAvatar(createProfileDto.id, avatar) : undefined;
+        try {
+            const profileAvatar = avatar ? await this.uploadAvatar(createProfileDto.id, avatar) : undefined;
 
-        if (profileAvatar) createProfileDto.setAvatarImageId(profileAvatar.id);
+            if (profileAvatar) createProfileDto.setAvatarImageId(profileAvatar.id);
 
-        const profile = await this.profileRepository.createProfile(createProfileDto);
+            const profile = await this.profileRepository.createProfile(createProfileDto);
 
-        return new ProfileResponse(profile);
+            if (!profile) return null;
+
+            return new ProfileResponse(profile);
+        } catch (err) {
+            // TODO: replace with logger
+            console.log(err);
+            throw err;
+        }
     }
 
     public async deleteUserProfileById(profileId: string): Promise<ProfileEntity>

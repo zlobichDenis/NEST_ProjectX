@@ -31,6 +31,36 @@ export class ProductRepository
         private readonly productVideoRepository: ProductVideoRepository,
     ) {}
 
+    public static transformProductEntity(product, total?: number): ProductEntity
+    {
+        const tags = product.tags.map((tag) =>
+        {
+            return new TagEntity(tag.tag);
+        });
+
+        const images = product.product_photos.map((photo) =>
+        {
+            const fileEntity = new PublicFileEntity(photo.photo.file);
+
+            return new ImageEntity(photo.photo).setFile(fileEntity);
+        });
+
+        const videos = product.product_videos.map((video) =>
+        {
+            const fileEntity = new PublicFileEntity(video.video.file);
+
+            return new VideoEntity(video.video).setFile(fileEntity);
+        });
+
+        return (
+            new ProductEntity(product)
+                .setTags(tags)
+                .setImages(images)
+                .setVideos(videos)
+                .setTotal(total)
+        );
+    }
+
     public async createProduct(
         {
             id,
@@ -104,33 +134,7 @@ export class ProductRepository
 
             return products.map((product) =>
             {
-                // TODO: refactor to move to separate function
-                const tags = product.tags.map((tag) =>
-                {
-                    return new TagEntity(tag.tag);
-                });
-
-                const images = product.product_photos.map((photo) =>
-                {
-                    const fileEntity = new PublicFileEntity(photo.photo.file);
-
-                    return new ImageEntity(photo.photo).setFile(fileEntity);
-                });
-
-                const videos = product.product_videos.map((video) =>
-                {
-                    const fileEntity = new PublicFileEntity(video.video.file);
-
-                    return new VideoEntity(video.video).setFile(fileEntity);
-                });
-
-                return (
-                    new ProductEntity(product)
-                        .setTags(tags)
-                        .setImages(images)
-                        .setVideos(videos)
-                        .setTotal(total)
-                );
+                return ProductRepository.transformProductEntity(product, total);
             });
         });
     }
@@ -178,30 +182,25 @@ export class ProductRepository
             },
         });
 
-        const tags = product.tags.map((tag) =>
-        {
-            return new TagEntity(tag.tag);
+        return ProductRepository.transformProductEntity(product);
+    }
+
+    public async getProductBatchByIds(
+        productIds: string[],
+        transaction: PrismaTransaction = this.prismaService,
+    ): Promise<ProductEntity[]>
+    {
+        const products = await transaction.product.findMany({
+            where: { id: { in: productIds } },  include: {
+                product_photos: { include: { photo: { include: { file: true } } } },
+                product_videos: { include: { video: { include: { file: true } } } },
+                tags: { include: { tag: true } },
+            },
         });
 
-        const images = product.product_photos.map((photo) =>
+        return products.map((product) =>
         {
-            const fileEntity = new PublicFileEntity(photo.photo.file);
-
-            return new ImageEntity(photo.photo).setFile(fileEntity);
+            return ProductRepository.transformProductEntity(product);
         });
-
-        const videos = product.product_videos.map((video) =>
-        {
-            const fileEntity = new PublicFileEntity(video.video.file);
-
-            return new VideoEntity(video.video).setFile(fileEntity);
-        });
-
-        return product
-            ? new ProductEntity(product)
-                .setImages(images)
-                .setTags(tags)
-                .setVideos(videos)
-            : null;
     }
 }
