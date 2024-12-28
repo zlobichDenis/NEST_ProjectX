@@ -6,7 +6,8 @@ export class CartDetailedEntity extends CartEntity
 {
     public readonly items: CartItemProductEntity[];
 
-    public constructor(baseEntity: CartBaseEntity, items: CartItemProductEntity[]) {
+    public constructor(baseEntity: CartBaseEntity, items: CartItemProductEntity[])
+    {
         super(baseEntity, []);
         this.items = items;
     }

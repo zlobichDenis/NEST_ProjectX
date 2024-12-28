@@ -16,7 +16,6 @@ export class ProductEntity
     public status: ProductStatus;
     public createdAt: Date;
 
-
     public total?: number;
     public description?: string;
     public updatedAt?: Date;
@@ -36,7 +35,7 @@ export class ProductEntity
     }: ProductBaseEntity)
     {
         this.id = id;
-        this.price = price;
+        this.price = Number(price);
         this.moderationStatus = moderation_status;
         this.status = status;
         this.description = description;

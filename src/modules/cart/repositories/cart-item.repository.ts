@@ -20,11 +20,17 @@ export class CartItemRepository
         const client = transaction || this.prismaService;
 
         await client.cart_item.createMany({
-            data:  dtos.map((item) => ({
-                id: item.id,
-                cart_id: item.cartId,
-                product_id: item.productId,
-                quantity: item.quantity,
+            data: await Promise.all(dtos.map(async (item) =>
+            {
+                const product = await client.product.findUnique({ where: { id: item.productId } });
+
+                return {
+                    id: item.id,
+                    cart_id: item.cartId,
+                    product_id: item.productId,
+                    quantity: item.quantity,
+                    price: product.price,
+                };
             })),
         });
 
@@ -41,6 +47,9 @@ export class CartItemRepository
 
         const cartItems = await client.cart_item.findMany({
             where: { cart_id: cartId },
+            orderBy: [
+                { added_at: "desc" },
+            ],
             include: {
                 product: {
                     include: {

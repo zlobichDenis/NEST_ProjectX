@@ -56,10 +56,10 @@ export class SellerProductController
     ): Promise<CreateProductResponse>
     {
         const createProductDto = new CreateSellerProductDto(dto).setSellerUserId(request.user.id);
-        console.log(files);
+
         if (
             !files
-          || !files.video[0]
+          || !files.video?.[0]
           || !files.photos?.length
           || !FileValidator.validateImages(files.photos)
           || !FileValidator.validateVideos(files.video)

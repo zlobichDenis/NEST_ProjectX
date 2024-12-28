@@ -30,7 +30,8 @@ export class ProfileService
         avatar?: Express.Multer.File,
     ): Promise<ProfileResponse | null>
     {
-        try {
+        try
+        {
             const profileAvatar = avatar ? await this.uploadAvatar(createProfileDto.id, avatar) : undefined;
 
             if (profileAvatar) createProfileDto.setAvatarImageId(profileAvatar.id);
@@ -40,7 +41,9 @@ export class ProfileService
             if (!profile) return null;
 
             return new ProfileResponse(profile);
-        } catch (err) {
+        }
+        catch (err)
+        {
             // TODO: replace with logger
             console.log(err);
             throw err;

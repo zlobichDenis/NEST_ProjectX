@@ -33,7 +33,7 @@ export class ProductRepository
 
     public static transformProductEntity(product, total?: number): ProductEntity
     {
-        const tags = product.tags.map((tag) =>
+        const tags = product.tags?.map((tag) =>
         {
             return new TagEntity(tag.tag);
         });
@@ -45,7 +45,7 @@ export class ProductRepository
             return new ImageEntity(photo.photo).setFile(fileEntity);
         });
 
-        const videos = product.product_videos.map((video) =>
+        const videos = product.product_videos?.map((video) =>
         {
             const fileEntity = new PublicFileEntity(video.video.file);
 
@@ -191,7 +191,8 @@ export class ProductRepository
     ): Promise<ProductEntity[]>
     {
         const products = await transaction.product.findMany({
-            where: { id: { in: productIds } },  include: {
+            where: { id: { in: productIds } },
+            include: {
                 product_photos: { include: { photo: { include: { file: true } } } },
                 product_videos: { include: { video: { include: { file: true } } } },
                 tags: { include: { tag: true } },

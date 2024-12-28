@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { product_status as ProductStatus } from "@prisma/client";
 
-export class GetProductsQueryDto {
+export class GetProductsQueryDto
+{
     @ApiProperty()
     public sellerId: string;
 

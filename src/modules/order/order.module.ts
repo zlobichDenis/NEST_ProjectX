@@ -12,7 +12,9 @@ import { ProfileModule } from "../profile/profile.module";
     controllers: [
         OrderController,
     ],
-    imports: [ProfileModule],
+    imports: [
+        ProfileModule,
+    ],
     exports: [],
 })
 export class OrderModule {}

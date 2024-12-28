@@ -30,7 +30,11 @@ export class SellerService
             }
 
             const createdSeller = await this.sellerRepository.createSeller(dto);
-            await this.logoFileService.uploadLogo(createdSeller.id, dto.logo);
+
+            if (dto.logo)
+            {
+                await this.logoFileService.uploadLogo(createdSeller.id, dto.logo);
+            }
 
             return new CreateSellerResponse(createdSeller);
         }
