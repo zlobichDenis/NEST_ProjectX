@@ -34,7 +34,6 @@ export class OrderRepository
     {
         return this.prismaService.$transaction(async (transaction) =>
         {
-            console.log(shippingAddress, customerAddressId)
             const existingAddress = shippingAddress && !customerAddressId
                 ? await this.profileAddressRepository.createProfileAddress(
                     new CreateProfileAddressDto(

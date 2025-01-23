@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Query, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, NotFoundException, Post, Query, Req, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { Roles } from "../../auth/decorators/role.decorator";
 import { user_role as UserRole } from "@prisma/client";
@@ -13,6 +13,10 @@ import {
 } from "./validation/get-profile-adresses-list.schema";
 import { GetProfileAddressListDto } from "./dto/get-profile-adress-list.dto";
 import { ProfileAddressEntity } from "./entities/profile-address.entity";
+import { CreateAddressBody, createAddressSchema } from "../../address/validation/create-address.schema";
+import { CreateAddressDto } from "../../address/requests/create-address.dto";
+import { ProfileEntity } from "../entities/profile.entity";
+import { CreateProfileAddressDto } from "./dto/create-profile-address.dto";
 
 @ApiBearerAuth()
 @ApiTags("profile")
@@ -44,5 +48,31 @@ export class ProfileAddressController
             limit: query.limit,
             profileId: customerProfile.id,
         }));
+    }
+
+    @Post("/own")
+    public async createOwnAddress(
+        @Req() req: RequestWithUser,
+            @Body(new ZodValidationPipe(createAddressSchema)) body: CreateAddressBody,
+    ): Promise<ProfileAddressEntity>
+    {
+        const profile = await this.getProfileByUserId(req.user.id);
+
+        const createAddressDto = new CreateAddressDto(body);
+        const createProfileAddressDto = new CreateProfileAddressDto(profile.id, createAddressDto);
+
+        return this.profileAddressService.createProfileAddress(createProfileAddressDto);
+    }
+
+    private async getProfileByUserId(userId: string): Promise<ProfileEntity>
+    {
+        const customerProfile = await this.profileRepository.getProfileByUserId(userId);
+
+        if (!customerProfile)
+        {
+            throw new NotFoundException();
+        }
+
+        return customerProfile;
     }
 }

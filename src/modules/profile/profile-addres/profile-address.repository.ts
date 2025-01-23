@@ -60,8 +60,6 @@ export class ProfileAddressRepository
                 include: { address: true },
             });
 
-        const test = new ProfileAddressEntity(profileAddress, new AddressEntity(profileAddress.address));
-
         return profileAddress
             ? new ProfileAddressEntity(profileAddress, new AddressEntity(profileAddress.address))
             : null;

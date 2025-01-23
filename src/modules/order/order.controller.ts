@@ -20,7 +20,7 @@ import { CreateOrderBody, createOrderSchema } from "./validation/create-order.sc
 import { CreateOrderDto } from "./requests/create-order.dto";
 import { ProfileRepository } from "../profile/profile.repository";
 import { ProfileEntity } from "../profile/entities/profile.entity";
-import { ListOffsetQuery, listOffsetSchema } from "../../core/validators/list-offset.schema";
+import { listOffsetSchema } from "../../core/validators/list-offset.schema";
 import { ListOffset } from "../../core/abstract/list.response";
 import { ProfileAddressRepository } from "../profile/profile-addres/profile-address.repository";
 import { OrderResponse } from "./responses/order.response";
