@@ -25,9 +25,9 @@ export class OrderService
 
     public async getOrderListByCustomerId(customerId: string, params: ListOffset): Promise<OrderListResponse>
     {
-        const orders = await this.orderRepository.getOrderListByCustomerId(customerId, params);
+        const { items: orders, total } = await this.orderRepository.getOrderListByCustomerId(customerId, params);
 
-        return new OrderListResponse(orders, params.offset, params.limit, orders[0]?.total || 0);
+        return new OrderListResponse(orders, params.offset, params.limit, total || 0);
     }
 
     public async getOrderById(orderId: string): Promise<OrderResponse>

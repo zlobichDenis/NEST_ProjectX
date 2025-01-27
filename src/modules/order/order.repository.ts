@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Dictionary, keyBy } from "lodash";
+import { Dictionary, groupBy } from "lodash";
 import { v4 as uuidv4 } from "uuid";
 import { PrismaService } from "../../shared/prisma-client";
 import { CreateOrderDto } from "./requests/create-order.dto";
@@ -70,7 +70,10 @@ export class OrderRepository
         });
     }
 
-    public async getOrderListByCustomerId(customerId: string, params: ListOffset): Promise<Dictionary<OrderListItem>>
+    public async getOrderListByCustomerId(
+        customerId: string,
+        params: ListOffset
+    ): Promise<{ items: Dictionary<OrderListItem[]>, total: number }>
     {
         return this.prismaService.$transaction(async (transaction) =>
         {
@@ -82,15 +85,20 @@ export class OrderRepository
                         include:
                           {
                               product:
-                                { include: {product_photos: { include: { photo: { include: { file: true } } } } } },
+                                { include: { product_photos: { include: { photo: { include: { file: true } } } } } },
                           },
                     },
                 },
                 skip: params.offset,
                 take: params.limit,
+                orderBy: { created_at: "desc" },
             });
 
-            const total = await transaction.order.count({ where: { customer_id: customerId } });
+            const groups = await transaction.order.findMany({
+                select: { group_id: true },
+                distinct: ["group_id"],
+                where: { customer_id: customerId },
+            });
 
             const orderListItems = orders.map((order) =>
             {
@@ -101,10 +109,13 @@ export class OrderRepository
                 const addressEntity = new AddressEntity(order.shipping_address.address);
 
 
-                return new OrderListItem(order, cartItemDetailedEntity, addressEntity, total);
+                return new OrderListItem(order, cartItemDetailedEntity, addressEntity);
             });
 
-            return keyBy(orderListItems, "groupId");
+            return {
+                items: groupBy(orderListItems, "groupId"),
+                total: groups?.length || 0,
+            };
         });
     }
 

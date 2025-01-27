@@ -6,9 +6,9 @@ import { Dictionary } from "lodash";
 export class OrderListResponse extends ListResponse
 {
     @ApiProperty()
-    public readonly items: Dictionary<OrderResponse>;
+    public readonly items: Dictionary<OrderResponse[]>;
 
-    public constructor(items: Dictionary<OrderResponse>, offset: number, limit: number, total: number)
+    public constructor(items: Dictionary<OrderResponse[]>, offset: number, limit: number, total: number)
     {
         super(offset, limit, total);
         this.items = items;

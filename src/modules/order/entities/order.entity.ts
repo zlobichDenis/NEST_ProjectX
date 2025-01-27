@@ -52,7 +52,12 @@ export class OrderListItem extends OrderEntity
 {
     public readonly total: number;
 
-    public constructor(baseEntity: OrderBaseEntity, cartItem: CartItemProductEntity, address: AddressEntity, total: number)
+    public constructor(
+        baseEntity: OrderBaseEntity,
+        cartItem: CartItemProductEntity,
+        address: AddressEntity,
+        total?: number,
+    )
     {
         super(baseEntity, cartItem, address);
         this.total = total;
